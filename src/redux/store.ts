@@ -5,6 +5,7 @@ import storage from "redux-persist/lib/storage"; // Default: localStorage for we
 import authReducer from "./features/auth/authSlice";
 import productReducer from "./features/products/productSlice";
 import cartReducer from "./features/cart/cartSlice";
+import userReducer from "./features/user/userSlice"; // Import user reducer
 import {
   FLUSH,
   REHYDRATE,
@@ -32,10 +33,17 @@ const persistConfigCart = {
   storage,
 };
 
+// Persistence configuration for user
+const persistConfigUser = {
+  key: "user",
+  storage,
+};
+
 // Wrap reducers with persistReducer
 const persistedAuthReducer = persistReducer(persistConfigAuth, authReducer);
 const persistedProductReducer = persistReducer(persistConfigProducts, productReducer);
 const persistedCartReducer = persistReducer(persistConfigCart, cartReducer);
+const persistedUserReducer = persistReducer(persistConfigUser, userReducer); // Wrap user reducer
 
 export const store = configureStore({
   reducer: {
@@ -43,6 +51,7 @@ export const store = configureStore({
     auth: persistedAuthReducer,
     products: persistedProductReducer,
     cart: persistedCartReducer,
+    user: persistedUserReducer, // Add user reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

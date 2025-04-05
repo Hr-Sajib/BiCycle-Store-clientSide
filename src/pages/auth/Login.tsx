@@ -20,7 +20,7 @@ function Login() {
 
     try {
       const response = await login({ email, password }).unwrap(); // Call login and unwrap the result
-      // navigate("/"); // Redirect on success
+      navigate("/"); // Redirect on success
       const user = verifyToken(response?.data?.accessToken);
       console.log("Login successful:", user);
 
