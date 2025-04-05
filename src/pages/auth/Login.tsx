@@ -1,14 +1,18 @@
 import { useLoginMutation } from "@/redux/features/auth/authApi";
+import { setUser } from "@/redux/features/auth/authSlice";
+import { useAppDispatch } from "@/redux/hook";
+import { verifyToken } from "@/utils/verifyToken";
 import { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [login, { data, error, isLoading }] = useLoginMutation(); // Moved to top level
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-
+  
     const email = (e.target as HTMLFormElement).email.value;
     const password = (e.target as HTMLFormElement).password.value;
 
@@ -16,8 +20,15 @@ function Login() {
 
     try {
       const response = await login({ email, password }).unwrap(); // Call login and unwrap the result
-      console.log("Login successful:", response);
-      navigate("/"); // Redirect on success
+      // navigate("/"); // Redirect on success
+      const user = verifyToken(response?.data?.accessToken);
+      console.log("Login successful:", user);
+
+      dispatch(setUser({
+        user:user,
+        token: response?.data?.accessToken
+      }))
+
     } catch (err) {
       console.error("Login failed:", err);
     }
