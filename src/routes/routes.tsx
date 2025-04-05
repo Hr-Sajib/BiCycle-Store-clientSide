@@ -4,10 +4,12 @@ import Login from "@/pages/auth/Login";
 import Register from "@/pages/auth/Register";
 import AllProducts from "@/pages/product/AllProducts";
 import Home from "@/pages/home/Home";
+import Checkout from "@/pages/checkOut/Checkout";
+import ProtectedRoute from "@/components/layout/ProtectedRoute";
 
 const router = createBrowserRouter([
     {
-    // root app route 
+
         path:"/",
         element:<App/>,
         children:[
@@ -28,6 +30,10 @@ const router = createBrowserRouter([
     {
         path:"allProducts",
         element:<AllProducts/>,
+    },
+    {
+        path:"checkOut",
+        element:<ProtectedRoute><Checkout/></ProtectedRoute>,
     },
 
     // admin app route 
