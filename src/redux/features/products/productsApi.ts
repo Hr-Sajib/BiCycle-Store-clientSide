@@ -4,7 +4,7 @@ import { TProduct } from "./productSlice";
 
 const productApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getProduct: builder.query<TProduct[], void>({
+    getProduct: builder.query<{ data: TProduct[] }, void>({
       query: () => ({
         url: "/products",
         method: "GET",

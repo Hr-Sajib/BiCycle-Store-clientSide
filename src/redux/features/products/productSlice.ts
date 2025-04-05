@@ -12,6 +12,7 @@ export enum BicycleType {
 
 // Define the Product interface
 export interface TProduct {
+  _id: string
   name: string;
   brand: string;
   price: number;

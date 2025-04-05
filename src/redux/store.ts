@@ -1,9 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { baseApi } from "./api/baseApi";
 import { persistReducer, persistStore } from "redux-persist";
-import storage from "redux-persist/lib/storage";
-import authReducer from "./features/auth/authSlice"; // Fixed typo: "auhReducer" -> "authReducer"
-import productReducer from "./features/products/productSlice"; // Add product reducer
+import storage from "redux-persist/lib/storage"; // Default: localStorage for web
+import authReducer from "./features/auth/authSlice";
+import productReducer from "./features/products/productSlice";
+import cartReducer from "./features/cart/cartSlice";
 import {
   FLUSH,
   REHYDRATE,
@@ -13,18 +14,35 @@ import {
   REGISTER,
 } from "redux-persist";
 
-const persistConfig = {
+// Persistence configuration for auth
+const persistConfigAuth = {
   key: "auth",
   storage,
 };
 
-const persistedAuthReducer = persistReducer(persistConfig, authReducer);
+// Persistence configuration for products
+const persistConfigProducts = {
+  key: "products",
+  storage,
+};
+
+// Persistence configuration for cart
+const persistConfigCart = {
+  key: "cart",
+  storage,
+};
+
+// Wrap reducers with persistReducer
+const persistedAuthReducer = persistReducer(persistConfigAuth, authReducer);
+const persistedProductReducer = persistReducer(persistConfigProducts, productReducer);
+const persistedCartReducer = persistReducer(persistConfigCart, cartReducer);
 
 export const store = configureStore({
   reducer: {
-    [baseApi.reducerPath]: baseApi.reducer,
+    [baseApi.reducerPath]: baseApi.reducer, // RTK Query reducer (not persisted)
     auth: persistedAuthReducer,
-    products: productReducer, 
+    products: persistedProductReducer,
+    cart: persistedCartReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
