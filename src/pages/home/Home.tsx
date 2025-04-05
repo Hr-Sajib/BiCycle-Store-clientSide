@@ -1,4 +1,4 @@
-import FeaturedProducts from "../product/FeaturedProducts";
+import FeaturedProducts from "./FeaturedProducts";
 import Hero from "./Hero";
 
 const Home = () => {

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
     return (
-        <div className="scroll-container mt-5 flex justify-center gap-[50vw] fixed top-0 left-0 right-0 mx-auto p-4 z-10">
+        <div className="border scroll-container bg-gray-100 w-[80vw] rounded-md mt-5 flex justify-center gap-[50vw] fixed top-0 left-0 right-0 mx-auto p-4 z-10">
             <Link to="/"><p className='font-bold text-2xl'>High Cycles</p></Link>
             <nav className='flex items-center gap-5'>
               <Link className="mr-5" to="/">Shop Now</Link>

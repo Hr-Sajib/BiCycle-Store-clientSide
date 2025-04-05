@@ -10,7 +10,7 @@ import router from "./routes/routes.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <StrictMode>
-      <Toaster/>
+    <Toaster/>
     <Provider store={store}>
         <RouterProvider router={router}/>
     </Provider> 

@@ -1,8 +1,7 @@
-
 const FeaturedProducts = () => {
     return (
         <div>
-            fp
+            
         </div>
     );
 };

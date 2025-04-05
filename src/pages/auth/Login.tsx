@@ -1,18 +1,26 @@
-import { useState, FormEvent } from "react";
+import { useLoginMutation } from "@/redux/features/auth/authApi";
+import { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate(); // For redirecting after login
+  const navigate = useNavigate();
+  const [login, { data, error, isLoading }] = useLoginMutation(); // Moved to top level
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    // Add your login logic here (e.g., Redux dispatch or API call)
+
+    const email = (e.target as HTMLFormElement).email.value;
+    const password = (e.target as HTMLFormElement).password.value;
+
     console.log("Login submitted:", { email, password });
 
-    // Example: Redirect to counter page after "login"
-    navigate("/");
+    try {
+      const response = await login({ email, password }).unwrap(); // Call login and unwrap the result
+      console.log("Login successful:", response);
+      navigate("/"); // Redirect on success
+    } catch (err) {
+      console.error("Login failed:", err);
+    }
   };
 
   return (
@@ -32,9 +40,7 @@ function Login() {
             </label>
             <input
               type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              name="email"
               className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="you@example.com"
               required
@@ -51,9 +57,7 @@ function Login() {
             </label>
             <input
               type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              name="password"
               className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="••••••••"
               required
@@ -64,23 +68,13 @@ function Login() {
           <div>
             <button
               type="submit"
-              className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              disabled={isLoading} // Disable button during loading
+              className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-blue-400"
             >
-              Log In
+              {isLoading ? "Logging in..." : "Log In"}
             </button>
           </div>
         </form>
-
-        {/* Optional Link to Register */}
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Don’t have an account?{" "}
-          <a
-            href="/register"
-            className="text-blue-600 hover:underline"
-          >
-            Register
-          </a>
-        </p>
       </div>
     </div>
   );
