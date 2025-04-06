@@ -2,15 +2,15 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { selectProducts, setProducts } from "@/redux/features/products/productSlice";
-import { useGetProductQuery } from "@/redux/features/products/productsApi";
 import { addToCart, selectCart } from "@/redux/features/cart/cartSlice";
+import { useGetAllProductsQuery } from "./productsApi";
 
 const ProductDetails = () => {
   const { productId } = useParams<{ productId: string }>(); // Get productId from URL
   const dispatch = useDispatch();
   const products = useSelector(selectProducts);
   const cart = useSelector(selectCart);
-  const { data, isLoading, error } = useGetProductQuery();
+  const { data, isLoading, error } = useGetAllProductsQuery();
 
   useEffect(() => {
     if (data?.data) {

@@ -5,7 +5,8 @@ import storage from "redux-persist/lib/storage"; // Default: localStorage for we
 import authReducer from "./features/auth/authSlice";
 import productReducer from "./features/products/productSlice";
 import cartReducer from "./features/cart/cartSlice";
-import userReducer from "./features/user/userSlice"; // Import user reducer
+import userReducer from "./features/user/userSlice"; // Existing user reducer
+import allUserReducer from "./features/user/allUserSlice"; // Import allUser reducer
 import {
   FLUSH,
   REHYDRATE,
@@ -39,11 +40,18 @@ const persistConfigUser = {
   storage,
 };
 
+// Persistence configuration for allUsers
+const persistConfigAllUsers = {
+  key: "allUsers",
+  storage,
+};
+
 // Wrap reducers with persistReducer
 const persistedAuthReducer = persistReducer(persistConfigAuth, authReducer);
 const persistedProductReducer = persistReducer(persistConfigProducts, productReducer);
 const persistedCartReducer = persistReducer(persistConfigCart, cartReducer);
-const persistedUserReducer = persistReducer(persistConfigUser, userReducer); // Wrap user reducer
+const persistedUserReducer = persistReducer(persistConfigUser, userReducer);
+const persistedAllUserReducer = persistReducer(persistConfigAllUsers, allUserReducer); // Wrap allUser reducer
 
 export const store = configureStore({
   reducer: {
@@ -51,7 +59,8 @@ export const store = configureStore({
     auth: persistedAuthReducer,
     products: persistedProductReducer,
     cart: persistedCartReducer,
-    user: persistedUserReducer, // Add user reducer
+    user: persistedUserReducer,
+    allUsers: persistedAllUserReducer, // Add persisted allUser reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

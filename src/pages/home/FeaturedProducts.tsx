@@ -1,17 +1,17 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectProducts, setProducts } from "@/redux/features/products/productSlice";
-import { useGetProductQuery } from "@/redux/features/products/productsApi";
 import { addToCart, selectCart } from "@/redux/features/cart/cartSlice";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { useGetAllProductsQuery } from "@/redux/features/products/productsApi";
 
 const FeaturedProducts = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate(); 
   const products = useSelector(selectProducts);
   const cart = useSelector(selectCart);
-  const { data, isLoading, error } = useGetProductQuery();
+  const { data, isLoading, error } = useGetAllProductsQuery();
 
   useEffect(() => {
     if (data?.data) {
