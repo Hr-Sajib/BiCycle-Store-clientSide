@@ -1,23 +1,69 @@
-import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { selectUser, selectUserLoading, selectUserError } from "@/redux/features/user/userSlice";
 import { selectCurrentUser } from "@/redux/features/auth/authSlice";
-import { useGetUserMutation } from "@/redux/features/user/userApi";
-import { useEffect } from "react";
+import { useGetUserQuery, useUpdateUserMutation, useUpdatePasswordMutation } from "@/redux/features/user/userApi";
+import { setUser } from "@/redux/features/user/userSlice";
 
 const UserDashboard = () => {
-  const authUser = useSelector(selectCurrentUser);
-  const user = useSelector(selectUser);
+  const authUser = useSelector(selectCurrentUser); // From auth slice
+  const user = useSelector(selectUser); // From user slice
   const loading = useSelector(selectUserLoading);
   const error = useSelector(selectUserError);
+  const dispatch = useDispatch();
 
-  // Use mutation instead of query
-  const [getUser, { data, isLoading, isError, error: mutationError }] = useGetUserMutation();
+  // Use query hook to fetch user data
+  const { data, isLoading, isError, error: queryError } = useGetUserQuery();
 
+  // Use mutation hook to update user data
+  const [updateUser, { isLoading: isUpdating, isError: isUpdateError, error: updateError }] =
+    useUpdateUserMutation();
+
+  // Use mutation hook to update password
+  const [updatePassword, { isLoading: isPasswordUpdating, isError: isPasswordError, error: passwordError }] =
+    useUpdatePasswordMutation();
+
+  // Sync API data with Redux store and initialize form fields
   useEffect(() => {
-    if (authUser?.userEmail) {
-      getUser({ email: authUser.userEmail });
+    if (data?.data) {
+      dispatch(setUser(data.data)); // Store fetched user in Redux
+      setName(data.data.name); // Initialize name
+      setEmail(data.data.email); // Initialize email
     }
-  }, [authUser, getUser]);
+  }, [data, dispatch]);
+
+  // State for editable fields
+  const [name, setName] = useState(user?.name || "");
+  const [email, setEmail] = useState(user?.email || "");
+
+  // State for password change form
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+
+  // Handle update button click
+  const handleUpdate = async () => {
+    try {
+      const updatedData = { name, email };
+      const result = await updateUser(updatedData).unwrap(); // Send update request
+      dispatch(setUser(result.data)); // Update Redux store with response
+      console.log("User updated successfully:", result.data);
+    } catch (err) {
+      console.error("Failed to update user:", err);
+    }
+  };
+
+  // Handle password change button click
+  const handleChangePassword = async () => {
+    try {
+      const passwordData = { oldPassword, newPassword };
+      const result = await updatePassword(passwordData).unwrap(); // Send password update request
+      console.log("Password updated successfully:", result.message);
+      setOldPassword(""); // Clear form on success
+      setNewPassword("");
+    } catch (err) {
+      console.error("Failed to update password:", err);
+    }
+  };
 
   if (isLoading || loading) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
@@ -26,7 +72,9 @@ const UserDashboard = () => {
   if (isError || error) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-red-500">Error: {(mutationError as any)?.data?.message || error}</p>
+        <p className="text-red-500">
+          Error: {(queryError as any)?.data?.message || error}
+        </p>
       </div>
     );
   }
@@ -45,59 +93,118 @@ const UserDashboard = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-          User Dashboard
+          User Profile
         </h2>
         {displayUser ? (
-          <form className="space-y-6">
-            <div>
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                value={displayUser.name}
-                readOnly
-                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700"
-              />
+          <>
+            {/* User Info Form */}
+            <div className="space-y-6">
+              <div>
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Name
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <p className="text-sm text-red-200">
+                  *Remember you have to log in with new email after changing email
+                </p>
+              </div>
+              <div className="flex justify-end">
+                <button
+                  onClick={handleUpdate}
+                  disabled={isUpdating}
+                  className={`bg-black text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    isUpdating ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {isUpdating ? "Updating..." : "Update"}
+                </button>
+              </div>
+              {isUpdateError && (
+                <p className="text-red-500 text-sm">
+                  Error: {(updateError as any)?.data?.message || "Failed to update"}
+                </p>
+              )}
             </div>
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={displayUser.email}
-                readOnly
-                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700"
-              />
+
+            {/* Password Change Form */}
+            <div className="mt-8 border-t pt-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Change Password
+              </h3>
+              <div className="space-y-6">
+                <div>
+                  <label
+                    htmlFor="oldPassword"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Old Password
+                  </label>
+                  <input
+                    type="password"
+                    id="oldPassword"
+                    value={oldPassword}
+                    onChange={(e) => setOldPassword(e.target.value)}
+                    className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="newPassword"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    id="newPassword"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <button
+                    onClick={handleChangePassword}
+                    disabled={isPasswordUpdating}
+                    className={`bg-black text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      isPasswordUpdating ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                  >
+                    {isPasswordUpdating ? "Changing..." : "Change Password"}
+                  </button>
+                </div>
+                {isPasswordError && (
+                  <p className="text-red-500 text-sm">
+                    Error: {(passwordError as any)?.data?.message || "Failed to change password"}
+                  </p>
+                )}
+              </div>
             </div>
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                value={displayUser.password} // Hashed password (consider hiding or showing masked)
-                readOnly
-                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700"
-              />
-              <p className="text-sm text-gray-500 mt-1">
-                Note: This is your encrypted password
-              </p>
-            </div>
-          </form>
+          </>
         ) : (
           <p className="text-center text-gray-500">No user data available.</p>
         )}

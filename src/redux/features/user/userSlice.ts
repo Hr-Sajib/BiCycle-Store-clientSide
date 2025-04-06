@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
 
-// Define the User interface
+// Define the User interface (aligned with backend)
 export interface User {
   name: string;
   email: string;
-  password: string; // Hashed password from DB
+  // Remove password since backend excludes it
+  // Add other fields if returned by backend (e.g., role)
 }
 
 // Define the state type for user

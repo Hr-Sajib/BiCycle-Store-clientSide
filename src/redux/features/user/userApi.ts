@@ -3,23 +3,28 @@ import { User } from "./userSlice";
 
 const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getUser: builder.mutation<{ data: User }, { email: string }>({
-      query: (body) => ({
-        url: "/users/me", // Adjust URL based on your backend
-        method: "POST", // Changed to POST to send data in body
-        body, // Send email in request body
+    getUser: builder.query<{ data: User }, void>({
+      query: () => ({
+        url: "/users/me",
+        method: "GET",
       }),
-    //   invalidatesTags: ["User"], // Using invalidatesTags since it's a mutation
     }),
     updateUser: builder.mutation<{ data: User }, Partial<User>>({
       query: (userData) => ({
-        url: "/users",
+        url: "/users/update-data", // Fixed to match your backend route
         method: "PATCH",
         body: userData,
       }),
-    //   invalidatesTags: ["User"],
+    }),
+    // New mutation for updating password
+    updatePassword: builder.mutation<{ message: string }, { oldPassword: string; newPassword: string }>({
+      query: (passwordData) => ({
+        url: "/users/update-password",
+        method: "PATCH",
+        body: passwordData,
+      }),
     }),
   }),
 });
 
-export const { useGetUserMutation, useUpdateUserMutation } = userApi;
+export const { useGetUserQuery, useUpdateUserMutation, useUpdatePasswordMutation } = userApi;
