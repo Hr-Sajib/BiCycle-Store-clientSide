@@ -53,7 +53,7 @@ const FeaturedProducts = () => {
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="w-full h-40 object-cover"
+                  className="w-full h-60 object-cover"
                 />
                 <div className="p-4">
                   <h3 className="text-lg font-medium text-gray-900 truncate">{product.name}</h3>

@@ -3,7 +3,9 @@ import { setUser } from "@/redux/features/auth/authSlice";
 import { useAppDispatch } from "@/redux/hook";
 import { verifyToken } from "@/utils/verifyToken";
 import { FormEvent } from "react";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 function Login() {
   const navigate = useNavigate();
@@ -23,6 +25,7 @@ function Login() {
       navigate("/"); // Redirect on success
       const user = verifyToken(response?.data?.accessToken);
       console.log("Login successful:", user);
+      toast("✅ Logged in successfully")
 
       dispatch(setUser({
         user:user,
@@ -31,6 +34,7 @@ function Login() {
 
     } catch (err) {
       console.error("Login failed:", err);
+      toast("❌ Login Error (See console)")
     }
   };
 
@@ -86,6 +90,14 @@ function Login() {
             </button>
           </div>
         </form>
+        {/* Link to Login */}
+        <p className="mt-2 text-center text-sm text-gray-600">
+          Don't have an account?{" "}
+          <a href="/register" className="text-blue-600 hover:underline">
+            Register
+          </a>
+        </p>
+
       </div>
     </div>
   );

@@ -5,6 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import UpdateProductModal from "./UpdateProductModal";
 import { useGetAllProductsQuery } from "@/redux/features/products/productsApi";
 import { setProducts, TProduct } from "@/redux/features/products/productSlice";
+import AddProductModal from "./AddProductModal";
+import { useGetAllOrdersQuery } from "@/redux/features/order/orderApi";
+import { setOrders, TOrder } from "@/redux/features/order/orderSlice";
+import UpdateOrderModal from "./UpdateOrderModal";
 
 
 const AdminDashboard = () => {
@@ -17,11 +21,16 @@ const AdminDashboard = () => {
   // Fetch all products using RTK Query
   const { data: productData, isLoading: isProductsLoading, error: productError } = useGetAllProductsQuery();
 
+  // Fetch all orders using RTK Query
+  const { data: orderData, isLoading: isOrdersLoading, error: orderError } = useGetAllOrdersQuery();
+
   // Toggle user status mutation
   const [toggleUserStatus, { isLoading: isToggling }] = useToggleUserStatusMutation();
 
-  // State for modal
-  const [selectedProduct, setSelectedProduct] = useState<TProduct | null>(null); // Type selectedProduct
+  // State for modals
+  const [selectedProduct, setSelectedProduct] = useState<TProduct | null>(null); // For Update Product modal
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false); // For Add Product modal
+  const [selectedOrder, setSelectedOrder] = useState<TOrder | null>(null); // For Update Order modal
 
   // Set fetched users into Redux store when data is available
   useEffect(() => {
@@ -37,6 +46,13 @@ const AdminDashboard = () => {
     }
   }, [productData, dispatch]);
 
+  // Set fetched orders into Redux store when data is available
+  useEffect(() => {
+    if (orderData?.success && orderData.data) {
+      dispatch(setOrders(orderData.data));
+    }
+  }, [orderData, dispatch]);
+
   // Handle toggle status
   const handleToggleStatus = async (userId: string) => {
     try {
@@ -49,14 +65,34 @@ const AdminDashboard = () => {
     }
   };
 
-  // Handle opening the modal with typed product
+  // Handle opening the update product modal
   const openUpdateModal = (product: TProduct) => {
     setSelectedProduct(product);
   };
 
-  // Handle closing the modal
+  // Handle closing the update product modal
   const closeUpdateModal = () => {
     setSelectedProduct(null);
+  };
+
+  // Handle opening the add product modal
+  const openAddModal = () => {
+    setIsAddModalOpen(true);
+  };
+
+  // Handle closing the add product modal
+  const closeAddModal = () => {
+    setIsAddModalOpen(false);
+  };
+
+  // Handle opening the update order modal
+  const openUpdateOrderModal = (order: TOrder) => {
+    setSelectedOrder(order);
+  };
+
+  // Handle closing the update order modal
+  const closeUpdateOrderModal = () => {
+    setSelectedOrder(null);
   };
 
   // Handle loading and error states for users
@@ -80,7 +116,7 @@ const AdminDashboard = () => {
     <div className="min-h-screen p-6 mt-24">
       {/* Users Section */}
       <h1 className="text-3xl font-bold text-gray-400 mb-6 text-center">Admin Dashboard</h1>
-      <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">All Users</h2>
+      <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Users</h2>
       {users.length > 0 ? (
         <div className="overflow-x-auto mb-12">
           <table className="w-[70vw] mx-auto bg-white shadow-md rounded-lg overflow-hidden table-fixed">
@@ -125,7 +161,16 @@ const AdminDashboard = () => {
       )}
 
       {/* Products Section */}
-      <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">All Products</h2>
+      <div className="flex justify-center gap-5 items-center mb-6">
+        <h2 className="text-3xl font-bold text-gray-800 text-center">Products</h2>
+        <button
+          onClick={openAddModal}
+          className="rounded-sm bg-gray-200 p-3 hover:bg-gray-300 text-gray-800 font-semibold"
+        >
+          Add Product
+        </button>
+      </div>
+
       {isProductsLoading ? (
         <div className="flex items-center justify-center">
           <p className="text-gray-500">Loading products...</p>
@@ -135,7 +180,7 @@ const AdminDashboard = () => {
           <p className="text-red-500">Error loading products: {JSON.stringify(productError)}</p>
         </div>
       ) : productData?.data && productData.data.length > 0 ? (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto mb-12">
           <table className="w-[70vw] mx-auto bg-white shadow-md rounded-lg overflow-hidden table-fixed">
             <thead className="bg-gray-200">
               <tr>
@@ -169,12 +214,66 @@ const AdminDashboard = () => {
           </table>
         </div>
       ) : (
-        <p className="text-center text-gray-500 mt-4">No products found.</p>
+        <p className="text-center text-gray-500 mt-4 mb-12">No products found.</p>
       )}
 
-      {/* Update Product Modal */}
+      {/* Orders Section */}
+      <div className="mb-6">
+        <h2 className="text-3xl font-bold text-gray-800 text-center">Orders</h2>
+        <p className="text-center text-gray-300">You can go to All Products to add products and create an order</p>
+      </div>
+
+      {isOrdersLoading ? (
+        <div className="flex items-center justify-center">
+          <p className="text-gray-500">Loading orders...</p>
+        </div>
+      ) : orderError ? (
+        <div className="flex items-center justify-center">
+          <p className="text-red-500">Error loading orders: {JSON.stringify(orderError)}</p>
+        </div>
+      ) : orderData?.data && orderData.data.length > 0 ? (
+        <div className="overflow-x-auto mb-12">
+          <table className="w-[70vw] mx-auto bg-white shadow-md rounded-lg overflow-hidden table-fixed">
+            <thead className="bg-gray-200">
+              <tr>
+                <th className="w-2/6 py-3 px-4 text-left text-sm font-semibold text-gray-700">User Email</th>
+                <th className="w-1/6 py-3 px-4 text-left text-sm font-semibold text-gray-700">Total Price</th>
+                <th className="w-1/6 py-3 px-4 text-left text-sm font-semibold text-gray-700">Status</th>
+                <th className="w-1/6 py-3 px-4 text-left text-sm font-semibold text-gray-700">Contact</th>
+                <th className="w-1/6 py-3 px-4 text-left text-sm font-semibold text-gray-700">Update</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orderData.data.map((order) => (
+                <tr key={order._id} className="border-b hover:bg-gray-50">
+                  <td className="w-2/6 py-3 px-4 text-sm text-gray-600 truncate">{order.userEmail}</td>
+                  <td className="w-1/6 py-3 px-4 text-sm text-gray-600">${order.totalPrice.toFixed(2)}</td>
+                  <td className="w-1/6 py-3 px-4 text-sm text-gray-600">{order.status}</td>
+                  <td className="w-1/6 py-3 px-4 text-sm text-gray-600 truncate">{order.contactNumber}</td>
+                  <td className="w-1/6 py-3 px-4 text-sm text-gray-600">
+                    <button
+                      onClick={() => openUpdateOrderModal(order)}
+                      className="py-1 px-3 rounded-sm text-white font-semibold bg-blue-500 hover:bg-blue-600 whitespace-nowrap"
+                    >
+                      Update
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="text-center text-gray-500 mt-4 mb-12">No orders found.</p>
+      )}
+
+      {/* Modals */}
       {selectedProduct && (
         <UpdateProductModal product={selectedProduct} onClose={closeUpdateModal} />
+      )}
+      {isAddModalOpen && <AddProductModal onClose={closeAddModal} />}
+      {selectedOrder && (
+        <UpdateOrderModal order={selectedOrder} onClose={closeUpdateOrderModal} />
       )}
     </div>
   );

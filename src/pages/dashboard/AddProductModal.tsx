@@ -1,30 +1,33 @@
+import { useCreateProductMutation } from "@/redux/features/products/productsApi"; // Adjust path
+import { TProduct } from "@/redux/features/products/productSlice"; // Adjust path
 import React, { useState } from "react";
-import { TProduct } from "@/redux/features/products/productSlice";
-import { useDeleteProductMutation, useUpdateProductMutation } from "@/redux/features/products/productsApi";
 import { toast } from "sonner";
+import { postImage } from "@/utils/postImage"; // Adjust path
 
-
-interface UpdateProductModalProps {
-  product: TProduct;
+interface AddProductModalProps {
   onClose: () => void;
 }
 
-const UpdateProductModal: React.FC<UpdateProductModalProps> = ({ product, onClose }) => {
+const AddProductModal: React.FC<AddProductModalProps> = ({ onClose }) => {
   const [formData, setFormData] = useState({
-    name: product.name,
-    brand: product.brand,
-    price: product.price,
-    image: product.image,
-    type: product.type,
-    description: product.description,
-    quantity: product.quantity,
-    inStock: product.inStock,
+    name: "",
+    brand: "",
+    price: 0,
+    image: "", // Will store the uploaded image URL
+    type: "Mountain" as TProduct["type"], // Default value
+    description: "",
+    quantity: 0,
+    inStock: true, // Default to true
   });
 
-  const [updateProduct, { isLoading: isUpdating, error: updateError }] = useUpdateProductMutation();
-  const [deleteProduct, { isLoading: isDeleting, error: deleteError }] = useDeleteProductMutation();
+  const [imageFile, setImageFile] = useState<File | null>(null); // Store the selected file
+  const [isUploading, setIsUploading] = useState(false); // Track image upload status
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const [createProduct, { isLoading: isCreating, error: createError }] = useCreateProductMutation();
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value, type } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -32,39 +35,52 @@ const UpdateProductModal: React.FC<UpdateProductModalProps> = ({ product, onClos
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await updateProduct({
-        productId: product._id,
-        data: formData,
-      }).unwrap();
-      console.log("Product updated successfully:", response.data);
-      toast("Product updated successfully")
-      onClose(); 
-    } catch (err) {
-      console.error("Failed to update product:", err);
-      toast("❌ Failed to update product(See console)")
-
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
     }
   };
 
-  const handleDelete = async () => {
-      try {
-        await deleteProduct(product._id).unwrap();
-        console.log("Product deleted successfully");
-        toast("✅ Product deleted successfully")
-        onClose(); // Close modal on success
-      } catch (err) {
-        console.error("Failed to delete product:", err);
-        toast("❌ Failed to delete product(See console)")
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      let imageUrl = formData.image;
+
+      // If an image file is selected, upload it first
+      if (imageFile) {
+        setIsUploading(true);
+        imageUrl = await postImage(imageFile);
+        setFormData((prev) => ({ ...prev, image: imageUrl }));
+        setIsUploading(false);
+      }
+
+      if (!imageUrl) {
+        throw new Error("Image upload failed or no image selected");
+      }
+
+      // Convert price and quantity to numbers
+      const productData = {
+        ...formData,
+        image: imageUrl,
+        price: parseFloat(formData.price as any) || 0,
+        quantity: parseInt(formData.quantity as any, 10) || 0,
+      };
+
+      const response = await createProduct(productData).unwrap();
+      console.log("Product created successfully:", response.data);
+      toast("✅ Product added successfully");
+      onClose(); // Close modal on success
+    } catch (err) {
+      console.error("Failed to create product:", err);
+      toast("❌ Failed to create product (See console)");
+      setIsUploading(false);
     }
   };
 
   return (
     <div className="fixed inset-0 backdrop-blur-xl flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-lg">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Update Product</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">Add New Product</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">Name</label>
@@ -102,15 +118,17 @@ const UpdateProductModal: React.FC<UpdateProductModalProps> = ({ product, onClos
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Image URL</label>
+            <label className="block text-sm font-medium text-gray-700">Image</label>
             <input
-              type="text"
-              name="image"
-              value={formData.image}
-              onChange={handleChange}
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
               className="mt-1 p-2 w-full border rounded-md"
               required
             />
+            {imageFile && (
+              <p className="text-sm text-gray-500 mt-1">Selected: {imageFile.name}</p>
+            )}
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">Type</label>
@@ -164,38 +182,24 @@ const UpdateProductModal: React.FC<UpdateProductModalProps> = ({ product, onClos
             </label>
           </div>
 
-          {updateError && <p className="text-red-500 mb-4">Update Error: {JSON.stringify(updateError)}</p>}
-          {deleteError && <p className="text-red-500 mb-4">Delete Error: {JSON.stringify(deleteError)}</p>}
 
-          <div className="flex justify-between space-x-2">
+          <div className="flex justify-end space-x-2">
             <button
               type="button"
-              onClick={handleDelete}
-              disabled={isDeleting || isUpdating}
-              className={`py-2 px-4 bg-red-500 text-white rounded-md hover:bg-red-600 ${
-                (isDeleting || isUpdating) ? "opacity-50 cursor-not-allowed" : ""
+              onClick={onClose}
+              className="py-2 px-4 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isCreating || isUploading}
+              className={`py-2 px-4 bg-green-500 text-white rounded-md hover:bg-green-600 ${
+                (isCreating || isUploading) ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              {isDeleting ? "Deleting..." : "Delete"}
+              {isCreating ? "Adding..." : "Add Product"}
             </button>
-            <div className="flex space-x-2">
-              <button
-                type="button"
-                onClick={onClose}
-                className="py-2 px-4 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isUpdating || isDeleting}
-                className={`py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 ${
-                  (isUpdating || isDeleting) ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-              >
-                {isUpdating ? "Saving..." : "Save"}
-              </button>
-            </div>
           </div>
         </form>
       </div>
@@ -203,4 +207,4 @@ const UpdateProductModal: React.FC<UpdateProductModalProps> = ({ product, onClos
   );
 };
 
-export default UpdateProductModal;
+export default AddProductModal;

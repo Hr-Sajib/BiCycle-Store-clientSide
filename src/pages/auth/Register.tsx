@@ -1,19 +1,49 @@
 import { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { useRegisterMutation } from "@/redux/features/auth/authApi"; // Adjust path
+import { toast } from "sonner";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate(); // For redirecting after registration
+  const navigate = useNavigate();
+  const [register, { isLoading, error }] = useRegisterMutation();
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    // Add your registration logic here (e.g., Redux dispatch or API call)
-    console.log("Register submitted:", { name, email, password });
-    
-    // Example: Redirect to login page after "registration"
-    navigate("/login");
+    try {
+      const userInfo = { name, email, password };
+      const response = await register(userInfo).unwrap();
+
+      if (response?.data?.success === true) {
+        toast(`✅ Registered successfully: ${response.data.message}`);
+        navigate("/login"); // Redirect to login on success
+      } else {
+        // Handle failure response from backend
+        const errorMsg = response?.data?.message || "Registration failed";
+        const errorDetails =
+          response?.data?.errorSources
+            ?.map((source: { path: string; message: string }) => `${source.path}: ${source.message}`)
+            .join(", ") || "Unknown error";
+        toast(`❌ ${errorMsg}${errorDetails ? " - " + errorDetails : ""}`);
+      }
+    } catch (err) {
+      console.error("Registration failed:", err);
+      if (error && "data" in error) {
+        const fetchError = error as FetchBaseQueryError;
+        const errorData = fetchError.data as ValidationError;
+        const errorMsg = errorData?.message || "An error occurred during registration";
+        const errorDetails =
+          errorData?.errorSources
+            ?.map((source: { path: string; message: string }) => `${source.path}: ${source.message}`)
+            .join(", ") || "Unknown error";
+        toast(`❌ ${errorMsg}${errorDetails ? " - " + errorDetails : ""}`);
+      } else {
+        toast("❌ An unexpected error occurred");
+      }
+    }
   };
 
   return (
@@ -84,9 +114,12 @@ function Register() {
           <div>
             <button
               type="submit"
-              className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              disabled={isLoading}
+              className={`w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                isLoading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
-              Register
+              {isLoading ? "Registering..." : "Register"}
             </button>
           </div>
         </form>
