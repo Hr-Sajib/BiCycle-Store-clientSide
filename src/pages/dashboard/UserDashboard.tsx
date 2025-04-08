@@ -4,6 +4,7 @@ import { selectUser, selectUserLoading, selectUserError } from "@/redux/features
 import { selectCurrentUser } from "@/redux/features/auth/authSlice";
 import { useGetUserQuery, useUpdateUserMutation, useUpdatePasswordMutation } from "@/redux/features/user/userApi";
 import { setUser } from "@/redux/features/user/userSlice";
+import { toast } from "sonner";
 
 const UserDashboard = () => {
   const authUser = useSelector(selectCurrentUser); // From auth slice
@@ -47,8 +48,10 @@ const UserDashboard = () => {
       const result = await updateUser(updatedData).unwrap(); // Send update request
       dispatch(setUser(result.data)); // Update Redux store with response
       console.log("User updated successfully:", result.data);
+      toast('✅ Updated successfully..');
     } catch (err) {
       console.error("Failed to update user:", err);
+      toast('❌ Update error!');
     }
   };
 
@@ -58,10 +61,14 @@ const UserDashboard = () => {
       const passwordData = { oldPassword, newPassword };
       const result = await updatePassword(passwordData).unwrap(); // Send password update request
       console.log("Password updated successfully:", result.message);
+      toast('✅ Update successfull..');
+
       setOldPassword(""); // Clear form on success
       setNewPassword("");
     } catch (err) {
       console.error("Failed to update password:", err);
+      toast('❌ Update error');
+
     }
   };
 

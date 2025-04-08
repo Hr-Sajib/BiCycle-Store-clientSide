@@ -41,6 +41,7 @@ const UpdateProductModal: React.FC<UpdateProductModalProps> = ({ product, onClos
       }).unwrap();
       console.log("Product updated successfully:", response.data);
       toast("Product updated successfully")
+      toast('✅ Product updated successfully..');
       onClose(); 
     } catch (err) {
       console.error("Failed to update product:", err);

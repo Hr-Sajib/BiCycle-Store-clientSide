@@ -21,6 +21,7 @@ export interface Order {
 interface OrderResponse {
   success: boolean;
   data: Order;
+  PaymentGatewayPageURL: string
 }
 
 interface OrdersResponse {

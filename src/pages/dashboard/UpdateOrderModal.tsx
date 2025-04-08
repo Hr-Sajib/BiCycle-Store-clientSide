@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { TOrder } from "@/redux/features/order/orderSlice";
 import { useUpdateOrderMutation } from "@/redux/features/order/orderApi";
+import { toast } from "sonner";
 
 interface UpdateOrderModalProps {
   order: TOrder;
@@ -34,9 +35,12 @@ const UpdateOrderModal: React.FC<UpdateOrderModalProps> = ({ order, onClose }) =
         data: formData,
       }).unwrap();
       console.log("Order updated successfully:", response.data);
+      toast('✅ Order updated successfully..');
       onClose(); // Close modal on success
     } catch (err) {
       console.error("Failed to update order:", err);
+      toast('❌Order update error!');
+
     }
   };
 

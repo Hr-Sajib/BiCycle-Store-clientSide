@@ -9,6 +9,7 @@ import AddProductModal from "./AddProductModal";
 import { useGetAllOrdersQuery } from "@/redux/features/order/orderApi";
 import { setOrders, TOrder } from "@/redux/features/order/orderSlice";
 import UpdateOrderModal from "./UpdateOrderModal";
+import { toast } from "sonner";
 
 
 const AdminDashboard = () => {
@@ -59,8 +60,11 @@ const AdminDashboard = () => {
       dispatch(deactivateUser(userId));
       const response = await toggleUserStatus(userId).unwrap();
       console.log("Status toggled successfully:", response);
+      toast('✅ Toggled status successfully..');
+
     } catch (err) {
       console.error("Failed to toggle status:", err);
+      toast('❌ Failed to toggle status!');
       dispatch(setAllUsers(userData?.data || []));
     }
   };

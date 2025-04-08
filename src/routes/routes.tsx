@@ -9,6 +9,8 @@ import ProtectedRoute from "@/components/layout/ProtectedRoute";
 import UserDashboard from "@/pages/dashboard/UserDashboard";
 import AdminDashboard from "@/pages/dashboard/AdminDashboard";
 import ProductDetails from "@/redux/features/products/ProductDetails";
+import PaymentSuccess from "@/pages/checkOut/PaymentSuccess";
+import PaymentFailed from "@/pages/checkOut/PaymentFailed";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +34,22 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Checkout />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "payment-success/:trans_id",
+        element: (
+          <ProtectedRoute>
+            <PaymentSuccess />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "payment-fail/:trans_id",
+        element: (
+          <ProtectedRoute>
+            <PaymentFailed />
           </ProtectedRoute>
         ),
       },

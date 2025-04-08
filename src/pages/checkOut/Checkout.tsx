@@ -91,6 +91,10 @@ const Checkout = () => {
         
       }
       console.log("Order Creation Result:", result);
+
+      const paymentPageUrl = result?.PaymentGatewayPageURL
+      console.log("Go to url - ",paymentPageUrl)
+      window.location.replace(paymentPageUrl);
     } catch (err) {
       console.error("Failed to create order:", err);
     }
