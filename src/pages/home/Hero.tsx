@@ -1,6 +1,6 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
-import "swiper/css"; // Core Swiper styles
+import "swiper/css"; 
 
 const Hero = () => {
   const imagesArray = [
@@ -10,11 +10,11 @@ const Hero = () => {
   ];
 
   return (
-    <div className="font-josefin-sans">
+    <div className="font-josefin-sans lg:mt-0 mt-26">
       <Swiper
         modules={[Autoplay]}
         autoplay={{
-          delay: 200000,
+          delay: 2000,
           disableOnInteraction: false,
         }}
         loop={true}

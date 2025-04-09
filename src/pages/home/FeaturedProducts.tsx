@@ -5,19 +5,31 @@ import { addToCart, selectCart } from "@/redux/features/cart/cartSlice";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useGetAllProductsQuery } from "@/redux/features/products/productsApi";
+import AOS from "aos"; // Corrected import name (Aos -> AOS)
+import "aos/dist/aos.css"; // Import AOS styles
 
 const FeaturedProducts = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const products = useSelector(selectProducts);
   const cart = useSelector(selectCart);
   const { data, isLoading, error } = useGetAllProductsQuery();
 
+  // Set products in Redux store
   useEffect(() => {
     if (data?.data) {
       dispatch(setProducts(data.data));
     }
   }, [data, dispatch]);
+
+  // Initialize AOS
+  useEffect(() => {
+    AOS.init({
+      duration: 600, // Animation duration (ms)
+      once: true, // Animate only once when scrolled into view
+      offset: 20, // Trigger animations 20px before element enters viewport
+    });
+  }, []);
 
   const handleAddToCart = (productId: string) => {
     dispatch(addToCart({ productId, quantity: 1 }));
@@ -27,11 +39,11 @@ const FeaturedProducts = () => {
     return cart.some((item) => item.productId === productId);
   };
 
-  // Navigate to product details page
   const handleProductClick = (productId: string) => {
     navigate(`/allProducts/productDetails/${productId}`);
   };
 
+  // Early returns after hooks
   if (isLoading) return <div className="text-center py-8 text-gray-500">Loading...</div>;
   if (error) return <div className="text-center py-8 text-red-600">Error loading products</div>;
 
@@ -41,14 +53,15 @@ const FeaturedProducts = () => {
       {products.length === 0 ? (
         <p className="text-center text-gray-500">No products available.</p>
       ) : (
-        <div className="grid grid-cols-4 gap-4">
-          {products.slice(0,8).map((product) => {
+        <div className="grid lg:!grid-cols-4 grid-cols-1 gap-4">
+          {products.slice(0, 8).map((product) => {
             const inCart = isProductInCart(product._id);
             return (
               <div
+                data-aos="fade-up" // AOS animation
                 key={product._id}
                 className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => handleProductClick(product._id)} // Navigate on card click
+                onClick={() => handleProductClick(product._id)}
               >
                 <img
                   src={product.image}
@@ -74,7 +87,7 @@ const FeaturedProducts = () => {
                   <p className="ml-4 mb-1 text-xl text-blue-700">${product.price}</p>
                   <button
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevent card click from triggering navigation
+                      e.stopPropagation();
                       handleAddToCart(product._id);
                     }}
                     className={`p-4 py-2 text-white rounded-tl-xl ${

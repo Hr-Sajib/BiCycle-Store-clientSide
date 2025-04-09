@@ -4,6 +4,9 @@ import { selectProducts, setProducts } from "@/redux/features/products/productSl
 import { addToCart, selectCart } from "@/redux/features/cart/cartSlice";
 import { useNavigate } from "react-router-dom";
 import { useGetAllProductsQuery } from "@/redux/features/products/productsApi";
+import AOS from "aos"; // Import AOS
+import "aos/dist/aos.css"; // Import AOS styles
+
 const AllProducts = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -11,9 +14,18 @@ const AllProducts = () => {
   const cart = useSelector(selectCart);
   const { data, isLoading, error } = useGetAllProductsQuery();
 
-  // State for filters
   const [priceFilter, setPriceFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+
+  // Scroll to top and initialize AOS on mount
+  useEffect(() => {
+    window.scrollTo({ top: 0});
+    AOS.init({
+      duration: 600, // Animation duration (ms)
+      once: true, // Animate only once when scrolled into view
+      offset: 20, // Trigger animations 100px before element enters viewport
+    });
+  }, []);
 
   useEffect(() => {
     if (data?.data) {
@@ -33,9 +45,7 @@ const AllProducts = () => {
     navigate(`/allProducts/productDetails/${productId}`);
   };
 
-  // Filter products based on price and category
   const filteredProducts = products.filter((product) => {
-    // Price filter
     let priceMatch = true;
     switch (priceFilter) {
       case "under100":
@@ -64,7 +74,6 @@ const AllProducts = () => {
         priceMatch = true;
     }
 
-    // Category filter
     const categoryMatch =
       categoryFilter === "all" || product.type.toLowerCase() === categoryFilter.toLowerCase();
 
@@ -80,7 +89,6 @@ const AllProducts = () => {
 
       {/* Filtering Options */}
       <div className="mb-8 flex gap-4">
-        {/* Price Filter */}
         <div className="flex flex-col">
           <select
             id="priceFilter"
@@ -99,7 +107,6 @@ const AllProducts = () => {
           </select>
         </div>
 
-        {/* Category Filter */}
         <div className="flex w-[300px] flex-col">
           <select
             id="categoryFilter"
@@ -120,14 +127,16 @@ const AllProducts = () => {
       {filteredProducts.length === 0 ? (
         <p className="text-center text-gray-500">No products match your filters.</p>
       ) : (
-        <div className="grid grid-cols-4 gap-4">
-          {filteredProducts.map((product) => {
+        <div className="grid lg:!grid-cols-4 grid-cols-1 gap-4">
+          {filteredProducts.map((product, index) => {
             const inCart = isProductInCart(product._id);
             return (
               <div
                 key={product._id}
                 className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                 onClick={() => handleProductClick(product._id)}
+                data-aos="fade-up" // AOS animation
+                data-aos-delay={index * 100} // Staggered delay for each card
               >
                 <img
                   src={product.image}

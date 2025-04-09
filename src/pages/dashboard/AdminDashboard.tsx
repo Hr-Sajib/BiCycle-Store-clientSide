@@ -1,3 +1,4 @@
+
 import { useGetAllUsersQuery, useToggleUserStatusMutation } from "@/redux/features/user/allUserApi"; // Adjust path
 import { selectAllUsers, setAllUsers, deactivateUser } from "@/redux/features/user/allUserSlice"; // Adjust path
 import { useEffect, useState } from "react";
@@ -123,7 +124,7 @@ const AdminDashboard = () => {
       <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Users</h2>
       {users.length > 0 ? (
         <div className="overflow-x-auto mb-12">
-          <table className="w-[70vw] mx-auto bg-white shadow-md rounded-lg overflow-hidden table-fixed">
+          <table className="lg:!w-[70vw] mx-auto bg-white shadow-md rounded-lg overflow-hidden table-fixed">
             <thead className="bg-gray-200">
               <tr>
                 <th className="w-1/5 py-3 px-4 text-left text-sm font-semibold text-gray-700">Name</th>
@@ -185,7 +186,7 @@ const AdminDashboard = () => {
         </div>
       ) : productData?.data && productData.data.length > 0 ? (
         <div className="overflow-x-auto mb-12">
-          <table className="w-[70vw] mx-auto bg-white shadow-md rounded-lg overflow-hidden table-fixed">
+          <table className="lg:!w-[70vw] mx-auto bg-white shadow-md rounded-lg overflow-hidden table-fixed">
             <thead className="bg-gray-200">
               <tr>
                 <th className="w-2/6 py-3 px-4 text-left text-sm font-semibold text-gray-700">Name</th>
@@ -237,7 +238,7 @@ const AdminDashboard = () => {
         </div>
       ) : orderData?.data && orderData.data.length > 0 ? (
         <div className="overflow-x-auto mb-12">
-          <table className="w-[70vw] mx-auto bg-white shadow-md rounded-lg overflow-hidden table-fixed">
+          <table className="lg:!w-[70vw] mx-auto bg-white shadow-md rounded-lg overflow-hidden table-fixed">
             <thead className="bg-gray-200">
               <tr>
                 <th className="w-2/6 py-3 px-4 text-left text-sm font-semibold text-gray-700">User Email</th>

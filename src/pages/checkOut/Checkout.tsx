@@ -1,10 +1,11 @@
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCart, removeFromCart, setCart } from "@/redux/features/cart/cartSlice"; // Add clearCart
 import { selectProducts } from "@/redux/features/products/productSlice";
 import { selectCurrentUser } from "@/redux/features/auth/authSlice";
 import { useCreateOrderMutation } from "@/redux/features/cart/orderApi";
 import { toast } from "sonner";
+import Aos from "aos";
 
 interface Order {
   userEmail: string;
@@ -28,6 +29,16 @@ const Checkout = () => {
   );
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+
+    // Scroll to top and initialize AOS on mount
+    useEffect(() => {
+      window.scrollTo({ top: 0});
+      Aos.init({
+        duration: 800, // Animation duration (ms)
+        once: true, // Animate only once when scrolled into view
+        offset: 100, // Trigger animations 100px before element enters viewport
+      });
+    }, []);
 
   const cartItemsWithDetails = cart.map((cartItem) => {
     const product = products.find((p) => p._id === cartItem.productId);
@@ -97,6 +108,8 @@ const Checkout = () => {
       window.location.replace(paymentPageUrl);
     } catch (err) {
       console.error("Failed to create order:", err);
+      toast('✅ Failed');
+
     }
   };
 
@@ -137,7 +150,7 @@ const Checkout = () => {
                         onChange={(e) =>
                           handleQuantityChange(item.productId, parseInt(e.target.value) || 1)
                         }
-                        className="w-16 px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="lg:w-16 w-12 px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </td>
                     <td className="py-4 px-4">
@@ -181,7 +194,7 @@ const Checkout = () => {
                   id="phone"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="mt-1 w-[700px] px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="mt-1 lg:w-[700px] px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="e.g., +8801712345678"
                   required
                 />
@@ -197,7 +210,7 @@ const Checkout = () => {
                   id="address"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  className="mt-1 w-[700px] px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="mt-1 lg:!w-[700px] w-[70vw] px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="e.g., 123 Main St, City, Country"
                   rows={3}
                   required
