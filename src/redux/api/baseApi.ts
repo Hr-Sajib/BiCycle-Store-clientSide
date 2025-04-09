@@ -4,7 +4,7 @@ import { RootState } from "../store"; // Adjust path to your store
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5100/api",
+    baseUrl: "bi-cycle-store-server-nu.vercel.app/api",
     credentials: "include", // for uses of cookies
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token; // Get token from auth slice

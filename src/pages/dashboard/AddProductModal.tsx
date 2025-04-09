@@ -23,7 +23,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose }) => {
   const [imageFile, setImageFile] = useState<File | null>(null); // Store the selected file
   const [isUploading, setIsUploading] = useState(false); // Track image upload status
 
-  const [createProduct, { isLoading: isCreating, error: createError }] = useCreateProductMutation();
+  const [createProduct, { isLoading: isCreating }] = useCreateProductMutation();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>

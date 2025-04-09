@@ -3,14 +3,13 @@ import { setUser } from "@/redux/features/auth/authSlice";
 import { useAppDispatch } from "@/redux/hook";
 import { verifyToken } from "@/utils/verifyToken";
 import { FormEvent } from "react";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 function Login() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [login, { data, error, isLoading }] = useLoginMutation(); // Moved to top level
+  const [login, {isLoading }] = useLoginMutation(); // Moved to top level
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
