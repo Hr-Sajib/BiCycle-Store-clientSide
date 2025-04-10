@@ -2,8 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectProducts, setProducts } from "@/redux/features/products/productSlice";
 import { addToCart, selectCart } from "@/redux/features/cart/cartSlice";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useGetAllProductsQuery } from "@/redux/features/products/productsApi";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -13,16 +12,17 @@ const FeaturedProducts = () => {
   const navigate = useNavigate();
   const products = useSelector(selectProducts);
   const cart = useSelector(selectCart);
-  const { data, isLoading, error } = useGetAllProductsQuery();
+  const { data, isLoading, error } = useGetAllProductsQuery({}); // Pass empty object for consistency
 
+  // Log error for debugging
   if (error) {
-    console.log(error);
+    console.log("Error fetching products:", error);
   }
 
   // Set products in Redux store
   useEffect(() => {
-    if (data?.data) {
-      dispatch(setProducts(data.data));
+    if (data?.success && data.data?.products) {
+      dispatch(setProducts(data.data.products));
     }
   }, [data, dispatch]);
 
@@ -37,7 +37,7 @@ const FeaturedProducts = () => {
 
   const handleAddToCart = (productId: string) => {
     dispatch(addToCart({ productId, quantity: 1 }));
-    console.log(productId);
+    console.log("Added to cart:", productId);
   };
 
   const isProductInCart = (productId: string) => {
@@ -50,7 +50,7 @@ const FeaturedProducts = () => {
 
   // Early returns after hooks
   if (isLoading) return <div className="text-center py-8 text-gray-500">Loading...</div>;
-  if (error) return <div className="text-center py-8 text-red-600">Error loading products</div>;
+  if (error) return <div className="text-center py-8 text-red-600">Error loading products: {JSON.stringify(error)}</div>;
 
   return (
     <div className="py-8 px-4 max-w-7xl mx-auto">

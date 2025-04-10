@@ -1,21 +1,19 @@
-
-import { useGetAllUsersQuery, useToggleUserStatusMutation } from "@/redux/features/user/allUserApi"; // Adjust path
-import { selectAllUsers, setAllUsers, deactivateUser } from "@/redux/features/user/allUserSlice"; // Adjust path
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import UpdateProductModal from "./UpdateProductModal";
+import { selectAllUsers, setAllUsers, deactivateUser } from "@/redux/features/user/allUserSlice";
+import { useGetAllUsersQuery, useToggleUserStatusMutation } from "@/redux/features/user/allUserApi";
 import { useGetAllProductsQuery } from "@/redux/features/products/productsApi";
 import { setProducts, TProduct } from "@/redux/features/products/productSlice";
-import AddProductModal from "./AddProductModal";
 import { useGetAllOrdersQuery } from "@/redux/features/order/orderApi";
 import { setOrders, TOrder } from "@/redux/features/order/orderSlice";
+import UpdateProductModal from "./UpdateProductModal";
+import AddProductModal from "./AddProductModal";
 import UpdateOrderModal from "./UpdateOrderModal";
 import { toast } from "sonner";
 
-
 const AdminDashboard = () => {
   useEffect(() => {
-    window.scrollTo({ top: 0})
+    window.scrollTo({ top: 0 });
   }, []);
 
   const dispatch = useDispatch();
@@ -25,7 +23,7 @@ const AdminDashboard = () => {
   const { data: userData, isLoading: isUsersLoading, error: userError } = useGetAllUsersQuery();
 
   // Fetch all products using RTK Query
-  const { data: productData, isLoading: isProductsLoading, error: productError } = useGetAllProductsQuery();
+  const { data: productData, isLoading: isProductsLoading, error: productError } = useGetAllProductsQuery({});
 
   // Fetch all orders using RTK Query
   const { data: orderData, isLoading: isOrdersLoading, error: orderError } = useGetAllOrdersQuery();
@@ -47,8 +45,8 @@ const AdminDashboard = () => {
 
   // Set fetched products into Redux store when data is available
   useEffect(() => {
-    if (productData?.success && productData.data) {
-      dispatch(setProducts(productData.data));
+    if (productData?.success && productData.data?.products) {
+      dispatch(setProducts(productData.data.products));
     }
   }, [productData, dispatch]);
 
@@ -65,11 +63,10 @@ const AdminDashboard = () => {
       dispatch(deactivateUser(userId));
       const response = await toggleUserStatus(userId).unwrap();
       console.log("Status toggled successfully:", response);
-      toast('✅ Toggled status successfully..');
-
+      toast("✅ Toggled status successfully..");
     } catch (err) {
       console.error("Failed to toggle status:", err);
-      toast('❌ Failed to toggle status!');
+      toast("❌ Failed to toggle status!");
       dispatch(setAllUsers(userData?.data || []));
     }
   };
@@ -188,7 +185,7 @@ const AdminDashboard = () => {
         <div className="flex items-center justify-center">
           <p className="text-red-500">Error loading products: {JSON.stringify(productError)}</p>
         </div>
-      ) : productData?.data && productData.data.length > 0 ? (
+      ) : productData?.data?.products && productData.data.products.length > 0 ? (
         <div className="overflow-x-auto mb-12">
           <table className="lg:!w-[70vw] mx-auto bg-white shadow-md rounded-lg overflow-hidden table-fixed">
             <thead className="bg-gray-200">
@@ -201,13 +198,13 @@ const AdminDashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {productData.data.map((product) => (
+              {productData.data.products.map((product) => (
                 <tr key={product._id} className="border-b hover:bg-gray-50">
                   <td className="w-2/6 py-3 px-4 text-sm text-gray-600 truncate">{product.name}</td>
                   <td className="w-1/6 py-3 px-4 text-sm text-gray-600">${product.price.toFixed(2)}</td>
                   <td className="w-1/6 py-3 px-4 text-sm text-gray-600">{product.quantity}</td>
                   <td className="w-1/6 py-3 px-4 text-sm text-gray-600">
-                    {product.inStock ? "Yes" : "No"}
+                    {product.quantity > 0 ? "Yes" : "No"} {/* Updated to use quantity */}
                   </td>
                   <td className="w-1/6 py-3 px-4 text-sm text-gray-600">
                     <button

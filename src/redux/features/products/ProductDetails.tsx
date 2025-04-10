@@ -3,23 +3,30 @@ import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { selectProducts, setProducts } from "@/redux/features/products/productSlice";
 import { addToCart, selectCart } from "@/redux/features/cart/cartSlice";
-import { useGetAllProductsQuery } from "./productsApi";
+import { useGetSingleProductQuery } from "./productsApi"; // Updated to use getSingleProduct
 
 const ProductDetails = () => {
   const { productId } = useParams<{ productId: string }>(); // Get productId from URL
   const dispatch = useDispatch();
   const products = useSelector(selectProducts);
   const cart = useSelector(selectCart);
-  const { data, isLoading, error } = useGetAllProductsQuery();
 
+  // Fetch single product using RTK Query
+  const { data, isLoading, error } = useGetSingleProductQuery(productId!); // `!` assumes productId is always present
+
+  // Update Redux store with the single product (optional, if you want it in the global list)
   useEffect(() => {
-    if (data?.data) {
-      dispatch(setProducts(data.data));
+    if (data?.success && data.data) {
+      // Check if the product is already in the store to avoid duplicates
+      const existingProduct = products.find((p) => p._id === data.data._id);
+      if (!existingProduct) {
+        dispatch(setProducts([...products, data.data]));
+      }
     }
-  }, [data, dispatch]);
+  }, [data, dispatch, products]);
 
-  // Find the product by ID
-  const product = products.find((p) => p._id === productId);
+  // Use the product directly from the API response
+  const product = data?.data;
 
   const handleAddToCart = (productId: string) => {
     dispatch(addToCart({ productId, quantity: 1 }));
@@ -30,7 +37,7 @@ const ProductDetails = () => {
   };
 
   if (isLoading) return <div className="text-center py-8 text-gray-500">Loading...</div>;
-  if (error) return <div className="text-center py-8 text-red-600">Error loading product details</div>;
+  if (error) return <div className="text-center py-8 text-red-600">Error loading product details: {JSON.stringify(error)}</div>;
   if (!product) return <div className="text-center py-8 text-gray-500">Product not found</div>;
 
   const inCart = isProductInCart(product._id);
@@ -59,7 +66,8 @@ const ProductDetails = () => {
             )}
           </p>
           <p className="text-gray-700 mb-4">
-            <span className="font-semibold">Description:</span> {product.description || "No description available."}
+            <span className="font-semibold">Description:</span>{" "}
+            {product.description || "No description available."}
           </p>
           <button
             onClick={() => handleAddToCart(product._id)}
