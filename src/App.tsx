@@ -15,7 +15,7 @@ function App() {
   return (
     <>
       <Navbar />
-      <div className="min-h-[50vh]">
+      <div className="min-h-[60vh]">
         <Link to="checkOut">
           <div className="fixed top-[90vh] lg:left-[92vw] left-[85vw] bg-blue-500 text-white p-3 rounded-sm z-20">
             <p className="bg-white text-black font-bold flex justify-center rounded-full">

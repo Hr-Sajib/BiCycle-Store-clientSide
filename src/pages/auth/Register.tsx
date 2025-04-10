@@ -2,51 +2,30 @@ import { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRegisterMutation } from "@/redux/features/auth/authApi"; // Adjust path
 import { toast } from "sonner";
-import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
-interface ValidationError {
-  message: string;
-  errorSources?: { path: string; message: string }[];
-}
-
 function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const [register, { isLoading, error }] = useRegisterMutation();
+  const [register, { isLoading }] = useRegisterMutation();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
       const userInfo = { name, email, password };
       const response = await register(userInfo).unwrap();
+      console.log(response)
 
-      if (response?.data?.success === true) {
-        toast(`✅ Registered successfully: ${response.data.message}`);
-        navigate("/login"); // Redirect to login on success
-      } else {
-        // Handle failure response from backend
-        const errorMsg = response?.data?.message || "Registration failed";
-        const errorDetails =
-          response?.data?.errorSources
-            ?.map((source: { path: string; message: string }) => `${source.path}: ${source.message}`)
-            .join(", ") || "Unknown error";
-        toast(`❌ ${errorMsg}${errorDetails ? " - " + errorDetails : ""}`);
+      if (response?.success) {
+        toast(`✅ Registered successfully. Log in now..`);
+        navigate("/login"); 
+      } 
+      else {
+        toast(`❌ Error: ${response?.data?.message}`);
       }
     } catch (err) {
       console.error("Registration failed:", err);
-      if (error && "data" in error) {
-        const fetchError = error as FetchBaseQueryError;
-        const errorData = fetchError.data as ValidationError;
-        const errorMsg = errorData?.message || "An error occurred during registration";
-        const errorDetails =
-          errorData?.errorSources
-            ?.map((source: { path: string; message: string }) => `${source.path}: ${source.message}`)
-            .join(", ") || "Unknown error";
-        toast(`❌ ${errorMsg}${errorDetails ? " - " + errorDetails : ""}`);
-      } else {
-        toast("❌ An unexpected error occurred");
-      }
+      toast(`❌ An unexpected error occurred: ${err}`);
     }
   };
 

@@ -6,34 +6,53 @@ import { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
+// Define a custom error type to handle RTK Query error shapes
+interface LoginError {
+  data?: {
+    message?: string;
+  };
+  message?: string; // Fallback for SerializedError
+}
+
 function Login() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [login, {isLoading }] = useLoginMutation(); // Moved to top level
+  const [login, { isLoading }] = useLoginMutation(); // Moved to top level
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-  
+
     const email = (e.target as HTMLFormElement).email.value;
     const password = (e.target as HTMLFormElement).password.value;
 
-    console.log("Login submitted:", { email, password });
-
     try {
-      const response = await login({ email, password }).unwrap(); // Call login and unwrap the result
-      navigate("/"); // Redirect on success
-      const user = verifyToken(response?.data?.accessToken);
-      console.log("Login successful:", user);
-      toast("✅ Logged in successfully")
+      const response = await login({ email, password });
 
-      dispatch(setUser({
-        user:user,
-        token: response?.data?.accessToken
-      }))
+      console.log("response: ", response);
 
+      if (response?.data?.data?.accessToken) {
+        const user = verifyToken(response?.data?.data?.accessToken);
+        if (user) {
+          console.log("Login successful:", user);
+          toast("✅ Logged in successfully");
+          dispatch(
+            setUser({
+              user: user,
+              token: response?.data?.accessToken,
+            })
+          );
+          navigate("/");
+        } else {
+          toast("Gained Token not valid");
+        }
+      } else if (response?.error) {
+        const error = response.error as LoginError; // Use custom type
+        console.log("Login Error:", response?.error);
+        toast(`Login Error: ${error.data?.message || "Unknown error"}`); // Safe access with fallback
+      }
     } catch (err) {
-      console.error("Login failed:", err);
-      toast("❌ Login Error (See console)")
+      console.error("Unexpected Login Error:", err);
+      toast(`❌ Unexpected Login Error. See console`);
     }
   };
 
@@ -96,7 +115,6 @@ function Login() {
             Register
           </a>
         </p>
-
       </div>
     </div>
   );

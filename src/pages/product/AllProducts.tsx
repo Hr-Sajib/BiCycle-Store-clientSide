@@ -4,32 +4,43 @@ import { selectProducts, setProducts } from "@/redux/features/products/productSl
 import { addToCart, selectCart } from "@/redux/features/cart/cartSlice";
 import { useNavigate } from "react-router-dom";
 import { useGetAllProductsQuery } from "@/redux/features/products/productsApi";
-import AOS from "aos"; // Import AOS
-import "aos/dist/aos.css"; // Import AOS styles
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { FaSearch } from "react-icons/fa";
 
 const AllProducts = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const products = useSelector(selectProducts);
   const cart = useSelector(selectCart);
-  const { data, isLoading, error } = useGetAllProductsQuery();
 
   const [priceFilter, setPriceFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [searchInput, setSearchInput] = useState<string>(""); // Input value
+  const [search, setSearch] = useState<string>(""); // Search term for API
+
+  const { data, isLoading, error } = useGetAllProductsQuery({
+    search: search || undefined, // Send search param to API
+  });
 
   // Scroll to top and initialize AOS on mount
   useEffect(() => {
-    window.scrollTo({ top: 0});
+    window.scrollTo({ top: 0 });
     AOS.init({
-      duration: 600, // Animation duration (ms)
-      once: true, // Animate only once when scrolled into view
-      offset: 20, // Trigger animations 100px before element enters viewport
+      duration: 600,
+      once: true,
+      offset: 20,
     });
   }, []);
 
   useEffect(() => {
+    console.log("API Data:", data); // Debug API response
     if (data?.data) {
-      dispatch(setProducts(data.data));
+      // Check if data.data is an array or has a products property
+      const productsArray = Array.isArray(data.data) ? data.data : data.data.products;
+      if (productsArray) {
+        dispatch(setProducts(productsArray));
+      }
     }
   }, [data, dispatch]);
 
@@ -43,6 +54,12 @@ const AllProducts = () => {
 
   const handleProductClick = (productId: string) => {
     navigate(`/allProducts/productDetails/${productId}`);
+  };
+
+  // Handle search button click
+  const handleSearch = () => {
+    console.log("Searching with term:", searchInput);
+    setSearch(searchInput); // Update search state to trigger API refetch
   };
 
   const filteredProducts = products.filter((product) => {
@@ -80,15 +97,31 @@ const AllProducts = () => {
     return priceMatch && categoryMatch;
   });
 
-  if (isLoading) return <div className="text-center py-8 text-gray-500">Loading...</div>;
-  if (error) return <div className="text-center py-8 text-red-600">Error loading products</div>;
+  if (isLoading) return <div className="text-center py-8 text-gray-500 mt-[20%]">Loading...</div>;
+  if (error) return <div className="text-center py-8 text-red-600">Error loading products: {JSON.stringify(error)}</div>;
 
   return (
     <div className="py-8 px-4 max-w-7xl mx-auto mt-24">
       <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">All Products</h2>
 
-      {/* Filtering Options */}
-      <div className="mb-8 flex gap-4">
+      {/* Filtering Options with Search Bar and Button */}
+      <div className="mb-8 flex gap-4 flex-wrap">
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="Search products..."
+            className="p-2 w-[200px] border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            onClick={handleSearch}
+            className="p-2 bg-blue-600 text-white h-10 rounded-md hover:bg-blue-700 flex items-center justify-center"
+            title="Search"
+          >
+            <FaSearch size={18} />
+          </button>
+        </div>
         <div className="flex flex-col">
           <select
             id="priceFilter"
@@ -106,7 +139,6 @@ const AllProducts = () => {
             <option value="above3000">Above $3000</option>
           </select>
         </div>
-
         <div className="flex w-[300px] flex-col">
           <select
             id="categoryFilter"
@@ -137,8 +169,8 @@ const AllProducts = () => {
                 key={product._id}
                 className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                 onClick={() => handleProductClick(product._id)}
-                data-aos="fade-up" // AOS animation
-                data-aos-delay={index * 100} // Staggered delay for each card
+                data-aos="fade-up"
+                data-aos-delay={index * 100}
               >
                 <img
                   src={product.image}

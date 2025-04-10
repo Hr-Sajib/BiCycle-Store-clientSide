@@ -11,6 +11,7 @@ import AdminDashboard from "@/pages/dashboard/AdminDashboard";
 import ProductDetails from "@/redux/features/products/ProductDetails";
 import PaymentSuccess from "@/pages/checkOut/PaymentSuccess";
 import PaymentFailed from "@/pages/checkOut/PaymentFailed";
+import About from "@/pages/About";
 
 const router = createBrowserRouter([
   {
@@ -72,6 +73,10 @@ const router = createBrowserRouter([
       {
         path: "allProducts",
         element: <AllProducts />,
+      },
+      {
+        path: "about",
+        element: <About/>,
       },
       {
         path: "allProducts/productDetails/:productId", // Dynamic route with productId
