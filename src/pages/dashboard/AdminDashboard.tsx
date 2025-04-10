@@ -14,6 +14,10 @@ import { toast } from "sonner";
 
 
 const AdminDashboard = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0})
+  }, []);
+
   const dispatch = useDispatch();
   const users = useSelector(selectAllUsers); // Read users from Redux store
 
@@ -104,7 +108,7 @@ const AdminDashboard = () => {
   if (isUsersLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Loading users...</p>
+        <p className="text-gray-500">Loading...</p>
       </div>
     );
   }

@@ -5,6 +5,8 @@ import "./App.css";
 import Navbar from "@/components/layout/Navbar"; // Adjusted path with @ alias
 import { Link } from "react-router-dom";
 import Footer from "./components/layout/Footer";
+// Import the Swiper styles
+
 
 function App() {
   const cart = useSelector(selectCart); // Fetch cart data from Redux store

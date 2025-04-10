@@ -5,8 +5,8 @@ import { addToCart, selectCart } from "@/redux/features/cart/cartSlice";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useGetAllProductsQuery } from "@/redux/features/products/productsApi";
-import AOS from "aos"; // Corrected import name (Aos -> AOS)
-import "aos/dist/aos.css"; // Import AOS styles
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const FeaturedProducts = () => {
   const dispatch = useDispatch();
@@ -14,6 +14,10 @@ const FeaturedProducts = () => {
   const products = useSelector(selectProducts);
   const cart = useSelector(selectCart);
   const { data, isLoading, error } = useGetAllProductsQuery();
+
+  if (error) {
+    console.log(error);
+  }
 
   // Set products in Redux store
   useEffect(() => {
@@ -25,14 +29,15 @@ const FeaturedProducts = () => {
   // Initialize AOS
   useEffect(() => {
     AOS.init({
-      duration: 600, // Animation duration (ms)
-      once: true, // Animate only once when scrolled into view
-      offset: 20, // Trigger animations 20px before element enters viewport
+      duration: 600,
+      once: true,
+      offset: 20,
     });
   }, []);
 
   const handleAddToCart = (productId: string) => {
     dispatch(addToCart({ productId, quantity: 1 }));
+    console.log(productId);
   };
 
   const isProductInCart = (productId: string) => {
@@ -56,9 +61,10 @@ const FeaturedProducts = () => {
         <div className="grid lg:!grid-cols-4 grid-cols-1 gap-4">
           {products.slice(0, 8).map((product) => {
             const inCart = isProductInCart(product._id);
+            const outOfStock = product.quantity === 0;
             return (
               <div
-                data-aos="fade-up" // AOS animation
+                data-aos="fade-up"
                 key={product._id}
                 className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                 onClick={() => handleProductClick(product._id)}
@@ -91,11 +97,15 @@ const FeaturedProducts = () => {
                       handleAddToCart(product._id);
                     }}
                     className={`p-4 py-2 text-white rounded-tl-xl ${
-                      inCart ? "bg-gray-300" : "bg-black hover:bg-gray-700"
+                      outOfStock
+                        ? "bg-gray-700"
+                        : inCart
+                        ? "bg-gray-300"
+                        : "bg-black hover:bg-gray-700"
                     }`}
-                    disabled={product.quantity === 0}
+                    disabled={outOfStock}
                   >
-                    {inCart ? "Added" : "Add"}
+                    {inCart && !outOfStock ? "Added" : "Add"}
                   </button>
                 </div>
               </div>
@@ -103,9 +113,8 @@ const FeaturedProducts = () => {
           })}
         </div>
       )}
-
       <div className="flex justify-center mt-10">
-        <Link to="allProducts">
+        <Link to="/allProducts">
           <button className="bg-black p-4 py-2 text-white hover:bg-gray-700 rounded-sm">
             See All Products
           </button>

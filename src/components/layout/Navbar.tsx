@@ -24,7 +24,7 @@ const Navbar = () => {
     <div className="bg-black text-white w-full lg:max-w-[90vw] max-w-[95vw] mx-auto rounded-md mt-5 flex justify-between items-center fixed top-0 left-0 right-0 p-4 z-50">
       {/* Brand */}
       <Link to="/" className="font-bold text-2xl">
-        High Cycles
+        Cycles Garden
       </Link>
 
       {/* Hamburger Icon */}

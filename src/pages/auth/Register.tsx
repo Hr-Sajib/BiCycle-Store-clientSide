@@ -3,6 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { useRegisterMutation } from "@/redux/features/auth/authApi"; // Adjust path
 import { toast } from "sonner";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+interface ValidationError {
+  message: string;
+  errorSources?: { path: string; message: string }[];
+}
 
 function Register() {
   const [name, setName] = useState("");

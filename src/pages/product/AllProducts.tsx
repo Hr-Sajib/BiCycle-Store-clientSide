@@ -130,6 +130,8 @@ const AllProducts = () => {
         <div className="grid lg:!grid-cols-4 grid-cols-1 gap-4">
           {filteredProducts.map((product, index) => {
             const inCart = isProductInCart(product._id);
+            const outOfStock = product.quantity === 0;
+
             return (
               <div
                 key={product._id}
@@ -166,11 +168,15 @@ const AllProducts = () => {
                       handleAddToCart(product._id);
                     }}
                     className={`p-4 py-2 text-white rounded-tl-xl ${
-                      inCart ? "bg-gray-300" : "bg-black hover:bg-gray-700"
+                      outOfStock
+                        ? "bg-gray-400"
+                        : inCart
+                        ? "bg-gray-300"
+                        : "bg-black hover:bg-gray-700"
                     }`}
-                    disabled={product.quantity === 0}
+                    disabled={outOfStock}
                   >
-                    {inCart ? "Added" : "Add"}
+                    {inCart && !outOfStock ? "Added" : "Add"}
                   </button>
                 </div>
               </div>
