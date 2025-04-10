@@ -46,6 +46,8 @@ const productApi = baseApi.injectEndpoints({
       query: (params = {}) => {
         const queryParams = new URLSearchParams();
 
+        console.log("query :", params)
+
         if (params.search) queryParams.append("search", params.search);
         if (params.filter) queryParams.append("filter", params.filter);
         if (params.sortBy) queryParams.append("sortBy", params.sortBy);

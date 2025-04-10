@@ -12,19 +12,23 @@ const FeaturedProducts = () => {
   const navigate = useNavigate();
   const products = useSelector(selectProducts);
   const cart = useSelector(selectCart);
-  const { data, isLoading, error } = useGetAllProductsQuery({}); // Pass empty object for consistency
+  const { data, isLoading, error } = useGetAllProductsQuery({}); // Added refetch
 
   // Log error for debugging
   if (error) {
     console.log("Error fetching products:", error);
   }
 
-  // Set products in Redux store
   useEffect(() => {
-    if (data?.success && data.data?.products) {
-      dispatch(setProducts(data.data.products));
+    if (data?.data) {
+      // Check if data.data is an array or has a products property
+      const productsArray = Array.isArray(data.data) ? data.data : data.data.products;
+      if (productsArray) {
+        dispatch(setProducts(productsArray));
+      }
     }
   }, [data, dispatch]);
+
 
   // Initialize AOS
   useEffect(() => {

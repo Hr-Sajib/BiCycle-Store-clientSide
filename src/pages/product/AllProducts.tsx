@@ -34,7 +34,7 @@ const AllProducts = () => {
   }, []);
 
   useEffect(() => {
-    console.log("API Data:", data); // Debug API response
+    // console.log("API Data:", data); // Debug API response
     if (data?.data) {
       // Check if data.data is an array or has a products property
       const productsArray = Array.isArray(data.data) ? data.data : data.data.products;
