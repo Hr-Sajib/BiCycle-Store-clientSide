@@ -12,6 +12,8 @@ const UserDashboard = () => {
   const loading = useSelector(selectUserLoading);
   const error = useSelector(selectUserError);
   const dispatch = useDispatch();
+  // console.log("Usr: ",authUser)
+
 
   // Use query hook to fetch user data
   const { data, isLoading, isError, error: queryError } = useGetUserQuery();
@@ -85,7 +87,6 @@ const UserDashboard = () => {
       </div>
     );
   }
-
   if (!authUser) {
     return (
       <div className="min-h-screen flex items-center justify-center">

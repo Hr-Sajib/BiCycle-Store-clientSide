@@ -86,7 +86,7 @@ const Navbar = () => {
           onClick={() => setIsMenuOpen(false)}
           className="block md:inline-block py-2 md:py-0 hover:text-gray-300"
         >
-          Check Out
+          About Us
         </Link>
 
         {user ? (

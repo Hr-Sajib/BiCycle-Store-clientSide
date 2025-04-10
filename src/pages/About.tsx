@@ -5,6 +5,8 @@ import "aos/dist/aos.css";
 const About = () => {
   // Initialize AOS animations
   useEffect(() => {
+    window.scrollTo({ top: 0 });
+
     AOS.init({
       duration: 600,
       once: true,
@@ -15,7 +17,7 @@ const About = () => {
   return (
     <div className="py-12 px-4 max-w-7xl mx-auto min-h-screen lg:!mt-26 mt-24">
       {/* Header Section */}
-      <section className="text-center mb-12">
+      <section className=" mb-12">
         <h1
           className="text-4xl font-bold text-gray-800 mb-4"
           data-aos="fade-down"

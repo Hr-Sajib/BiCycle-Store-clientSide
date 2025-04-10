@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAllUsers, setAllUsers, deactivateUser } from "@/redux/features/user/allUserSlice";
 import { useGetAllUsersQuery, useToggleUserStatusMutation } from "@/redux/features/user/allUserApi";
-import { useGetAllProductsQuery } from "@/redux/features/products/productsApi";
-import { setProducts, TProduct } from "@/redux/features/products/productSlice";
+import { selectProducts, TProduct } from "@/redux/features/products/productSlice";
 import { useGetAllOrdersQuery } from "@/redux/features/order/orderApi";
 import { setOrders, TOrder } from "@/redux/features/order/orderSlice";
 import UpdateProductModal from "./UpdateProductModal";
@@ -17,13 +16,11 @@ const AdminDashboard = () => {
   }, []);
 
   const dispatch = useDispatch();
-  const users = useSelector(selectAllUsers); // Read users from Redux store
+  const users = useSelector(selectAllUsers);
+  const products = useSelector(selectProducts); // Get products from Redux store
 
   // Fetch all users using RTK Query
   const { data: userData, isLoading: isUsersLoading, error: userError } = useGetAllUsersQuery();
-
-  // Fetch all products using RTK Query
-  const { data: productData, isLoading: isProductsLoading, error: productError } = useGetAllProductsQuery({});
 
   // Fetch all orders using RTK Query
   const { data: orderData, isLoading: isOrdersLoading, error: orderError } = useGetAllOrdersQuery();
@@ -32,25 +29,18 @@ const AdminDashboard = () => {
   const [toggleUserStatus, { isLoading: isToggling }] = useToggleUserStatusMutation();
 
   // State for modals
-  const [selectedProduct, setSelectedProduct] = useState<TProduct | null>(null); // For Update Product modal
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false); // For Add Product modal
-  const [selectedOrder, setSelectedOrder] = useState<TOrder | null>(null); // For Update Order modal
+  const [selectedProduct, setSelectedProduct] = useState<TProduct | null>(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<TOrder | null>(null);
 
-  // Set fetched users into Redux store when data is available
+  // Set fetched users into Redux store
   useEffect(() => {
     if (userData?.success && userData.data) {
       dispatch(setAllUsers(userData.data));
     }
   }, [userData, dispatch]);
 
-  // Set fetched products into Redux store when data is available
-  useEffect(() => {
-    if (productData?.success && productData.data?.products) {
-      dispatch(setProducts(productData.data.products));
-    }
-  }, [productData, dispatch]);
-
-  // Set fetched orders into Redux store when data is available
+  // Set fetched orders into Redux store
   useEffect(() => {
     if (orderData?.success && orderData.data) {
       dispatch(setOrders(orderData.data));
@@ -71,37 +61,14 @@ const AdminDashboard = () => {
     }
   };
 
-  // Handle opening the update product modal
-  const openUpdateModal = (product: TProduct) => {
-    setSelectedProduct(product);
-  };
+  // Modal handlers
+  const openUpdateModal = (product: TProduct) => setSelectedProduct(product);
+  const closeUpdateModal = () => setSelectedProduct(null);
+  const openAddModal = () => setIsAddModalOpen(true);
+  const closeAddModal = () => setIsAddModalOpen(false);
+  const openUpdateOrderModal = (order: TOrder) => setSelectedOrder(order);
+  const closeUpdateOrderModal = () => setSelectedOrder(null);
 
-  // Handle closing the update product modal
-  const closeUpdateModal = () => {
-    setSelectedProduct(null);
-  };
-
-  // Handle opening the add product modal
-  const openAddModal = () => {
-    setIsAddModalOpen(true);
-  };
-
-  // Handle closing the add product modal
-  const closeAddModal = () => {
-    setIsAddModalOpen(false);
-  };
-
-  // Handle opening the update order modal
-  const openUpdateOrderModal = (order: TOrder) => {
-    setSelectedOrder(order);
-  };
-
-  // Handle closing the update order modal
-  const closeUpdateOrderModal = () => {
-    setSelectedOrder(null);
-  };
-
-  // Handle loading and error states for users
   if (isUsersLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -177,15 +144,7 @@ const AdminDashboard = () => {
         </button>
       </div>
 
-      {isProductsLoading ? (
-        <div className="flex items-center justify-center">
-          <p className="text-gray-500">Loading products...</p>
-        </div>
-      ) : productError ? (
-        <div className="flex items-center justify-center">
-          <p className="text-red-500">Error loading products: {JSON.stringify(productError)}</p>
-        </div>
-      ) : productData?.data?.products && productData.data.products.length > 0 ? (
+      {products.length > 0 ? (
         <div className="overflow-x-auto mb-12">
           <table className="lg:!w-[70vw] mx-auto bg-white shadow-md rounded-lg overflow-hidden table-fixed">
             <thead className="bg-gray-200">
@@ -198,13 +157,13 @@ const AdminDashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {productData.data.products.map((product) => (
+              {products.map((product) => (
                 <tr key={product._id} className="border-b hover:bg-gray-50">
                   <td className="w-2/6 py-3 px-4 text-sm text-gray-600 truncate">{product.name}</td>
                   <td className="w-1/6 py-3 px-4 text-sm text-gray-600">${product.price.toFixed(2)}</td>
                   <td className="w-1/6 py-3 px-4 text-sm text-gray-600">{product.quantity}</td>
                   <td className="w-1/6 py-3 px-4 text-sm text-gray-600">
-                    {product.quantity > 0 ? "Yes" : "No"} {/* Updated to use quantity */}
+                    {product.quantity > 0 ? "Yes" : "No"}
                   </td>
                   <td className="w-1/6 py-3 px-4 text-sm text-gray-600">
                     <button
@@ -274,13 +233,9 @@ const AdminDashboard = () => {
       )}
 
       {/* Modals */}
-      {selectedProduct && (
-        <UpdateProductModal product={selectedProduct} onClose={closeUpdateModal} />
-      )}
+      {selectedProduct && <UpdateProductModal product={selectedProduct} onClose={closeUpdateModal} />}
       {isAddModalOpen && <AddProductModal onClose={closeAddModal} />}
-      {selectedOrder && (
-        <UpdateOrderModal order={selectedOrder} onClose={closeUpdateOrderModal} />
-      )}
+      {selectedOrder && <UpdateOrderModal order={selectedOrder} onClose={closeUpdateOrderModal} />}
     </div>
   );
 };

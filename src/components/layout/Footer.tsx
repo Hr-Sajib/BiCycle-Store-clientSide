@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="grid grid-cols-1 md:!grid-cols-3 gap-10">
         {/* Brand Info */}
         <div>
-          <h2 className="text-2xl font-bold mb-4">High Cycles</h2>
+          <h2 className="text-2xl font-bold mb-4">Cycles Garden</h2>
           <p className="text-gray-400">
             Premium bicycles and accessories crafted for performance and style.
             Ride with us for your next adventure.

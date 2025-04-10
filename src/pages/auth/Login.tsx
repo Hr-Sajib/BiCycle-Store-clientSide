@@ -2,7 +2,8 @@ import { useLoginMutation } from "@/redux/features/auth/authApi";
 import { setUser } from "@/redux/features/auth/authSlice";
 import { useAppDispatch } from "@/redux/hook";
 import { verifyToken } from "@/utils/verifyToken";
-import { FormEvent } from "react";
+import Aos from "aos";
+import { FormEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -15,6 +16,16 @@ interface LoginError {
 }
 
 function Login() {
+
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+    Aos.init({
+      duration: 600,
+      once: true,
+      offset: 20,
+    });
+  }, []);
+  
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [login, { isLoading }] = useLoginMutation(); // Moved to top level
@@ -58,7 +69,7 @@ function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+      <div data-aos="zoom-in"  className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
           Login
         </h2>

@@ -1,8 +1,18 @@
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRegisterMutation } from "@/redux/features/auth/authApi"; // Adjust path
 import { toast } from "sonner";
+import Aos from "aos";
 function Register() {
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+    Aos.init({
+      duration: 600,
+      once: true,
+      offset: 20,
+    });
+  }, []);
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,7 +41,7 @@ function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+      <div data-aos="zoom-in" className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
           Register
         </h2>
