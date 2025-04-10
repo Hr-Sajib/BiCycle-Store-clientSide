@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useGetAllProductsQuery } from "@/redux/features/products/productsApi";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaFilter, FaTimes } from "react-icons/fa";
 
 const AllProducts = () => {
   const dispatch = useDispatch();
@@ -16,14 +16,16 @@ const AllProducts = () => {
 
   const [priceFilter, setPriceFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
-  const [searchInput, setSearchInput] = useState<string>(""); // Input value
-  const [search, setSearch] = useState<string>(""); // Search term for API
+  const [brandFilter, setBrandFilter] = useState<string>("all");
+  const [stockFilter, setStockFilter] = useState<string>("all");
+  const [searchInput, setSearchInput] = useState<string>("");
+  const [search, setSearch] = useState<string>("");
+  const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false); // Sidebar state
 
   const { data, isLoading, error } = useGetAllProductsQuery({
-    search: search || undefined, // Send search param to API
+    search: search || undefined,
   });
 
-  // Scroll to top and initialize AOS on mount
   useEffect(() => {
     window.scrollTo({ top: 0 });
     AOS.init({
@@ -34,15 +36,16 @@ const AllProducts = () => {
   }, []);
 
   useEffect(() => {
-    // console.log("API Data:", data); // Debug API response
     if (data?.data) {
-      // Check if data.data is an array or has a products property
       const productsArray = Array.isArray(data.data) ? data.data : data.data.products;
       if (productsArray) {
         dispatch(setProducts(productsArray));
       }
     }
   }, [data, dispatch]);
+
+  const uniqueBrands = Array.from(new Set(products.map((product) => product.brand))).sort();
+  const uniqueCategories = Array.from(new Set(products.map((product) => product.type))).sort();
 
   const handleAddToCart = (productId: string) => {
     dispatch(addToCart({ productId, quantity: 1 }));
@@ -56,10 +59,19 @@ const AllProducts = () => {
     navigate(`/allProducts/productDetails/${productId}`);
   };
 
-  // Handle search button click
   const handleSearch = () => {
     console.log("Searching with term:", searchInput);
-    setSearch(searchInput); // Update search state to trigger API refetch
+    setSearch(searchInput);
+  };
+
+  // Reset all filters to default
+  const handleResetFilters = () => {
+    setPriceFilter("all");
+    setCategoryFilter("all");
+    setBrandFilter("all");
+    setStockFilter("all");
+    setSearchInput("");
+    setSearch("");
   };
 
   const filteredProducts = products.filter((product) => {
@@ -93,19 +105,34 @@ const AllProducts = () => {
 
     const categoryMatch =
       categoryFilter === "all" || product.type.toLowerCase() === categoryFilter.toLowerCase();
+    const brandMatch =
+      brandFilter === "all" || product.brand.toLowerCase() === brandFilter.toLowerCase();
+    let stockMatch = true;
+    switch (stockFilter) {
+      case "inStock":
+        stockMatch = product.quantity > 0;
+        break;
+      case "outOfStock":
+        stockMatch = product.quantity === 0;
+        break;
+      case "all":
+      default:
+        stockMatch = true;
+    }
 
-    return priceMatch && categoryMatch;
+    return priceMatch && categoryMatch && brandMatch && stockMatch;
   });
 
   if (isLoading) return <div className="text-center py-8 text-gray-500 mt-[20%]">Loading...</div>;
   if (error) return <div className="text-center py-8 text-red-600">Error loading products: {JSON.stringify(error)}</div>;
 
   return (
-    <div className="py-8 px-4 max-w-7xl mx-auto mt-24">
+    <div className="py-8 px-4 max-w-7xl mx-auto mt-24 relative">
       <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">All Products</h2>
 
-      {/* Filtering Options with Search Bar and Button */}
-      <div className="mb-8 flex gap-4 flex-wrap">
+      {/* Filtering Options */}
+      <div className="mb-8 flex gap-4 flex-wrap items-center justify-between">
+        {/* Search Bar (Always Visible) */}
         <div className="flex items-center gap-2">
           <input
             type="text"
@@ -122,7 +149,18 @@ const AllProducts = () => {
             <FaSearch size={18} />
           </button>
         </div>
-        <div className="flex flex-col">
+
+        {/* Filter Button (Visible on Small Screens) */}
+        <button
+          onClick={() => setIsFilterOpen(true)}
+          className="md:!hidden h-11 flex gap-2 z-40 p-2 bg-blue-600 fixed right-0 text-white rounded-l-md hover:bg-blue-700 flex items-center justify-center"
+          title="Filter"
+        >
+          <FaFilter size={15} />Filter
+        </button>
+
+        {/* Inline Filters (Visible on Medium and Larger Screens) */}
+        <div className="hidden md:!flex gap-4 flex-wrap">
           <select
             id="priceFilter"
             value={priceFilter}
@@ -138,23 +176,123 @@ const AllProducts = () => {
             <option value="2000to3000">$2000 - $3000</option>
             <option value="above3000">Above $3000</option>
           </select>
-        </div>
-        <div className="flex w-[300px] flex-col">
           <select
             id="categoryFilter"
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="p-2 w-[200px] border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="all">All Categories</option>
-            <option value="Mountain">Mountain</option>
-            <option value="Road">Road</option>
-            <option value="Hybrid">Hybrid</option>
-            <option value="BMX">BMX</option>
-            <option value="Electric">Electric</option>
+            {uniqueCategories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+          <select
+            id="brandFilter"
+            value={brandFilter}
+            onChange={(e) => setBrandFilter(e.target.value)}
+            className="p-2 w-[200px] border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="all">All Brands</option>
+            {uniqueBrands.map((brand) => (
+              <option key={brand} value={brand}>
+                {brand}
+              </option>
+            ))}
+          </select>
+          <select
+            id="stockFilter"
+            value={stockFilter}
+            onChange={(e) => setStockFilter(e.target.value)}
+            className="p-2 w-[200px] border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="all">All Stock</option>
+            <option value="inStock">In Stock</option>
+            <option value="outOfStock">Out of Stock</option>
           </select>
         </div>
       </div>
+
+      {/* Sidebar Modal (Visible on Small Screens when Filter Button is Clicked) */}
+      {isFilterOpen && (
+        <div data-aos="fade-left" className="fadeToRight fixed inset-0 z-50 md:hidden">
+          <div className="fixed top-0 right-0 w-80 h-full bg-white p-6 shadow-lg transform transition-transform duration-300 ease-in-out">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-semibold text-gray-800">Filters</h3>
+              <button
+                onClick={() => setIsFilterOpen(false)}
+                className="text-gray-600 hover:text-gray-800"
+                title="Close"
+              >
+                <FaTimes size={24} />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <select
+                id="priceFilterMobile"
+                value={priceFilter}
+                onChange={(e) => setPriceFilter(e.target.value)}
+                className="p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="all">All Prices</option>
+                <option value="under100">Under $100</option>
+                <option value="100to500">$100 - $500</option>
+                <option value="500to1000">$500 - $1000</option>
+                <option value="1000to1500">$1000 - $1500</option>
+                <option value="1500to2000">$1500 - $2000</option>
+                <option value="2000to3000">$2000 - $3000</option>
+                <option value="above3000">Above $3000</option>
+              </select>
+              <select
+                id="categoryFilterMobile"
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="all">All Categories</option>
+                {uniqueCategories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+              <select
+                id="brandFilterMobile"
+                value={brandFilter}
+                onChange={(e) => setBrandFilter(e.target.value)}
+                className="p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="all">All Brands</option>
+                {uniqueBrands.map((brand) => (
+                  <option key={brand} value={brand}>
+                    {brand}
+                  </option>
+                ))}
+              </select>
+              <select
+                id="stockFilterMobile"
+                value={stockFilter}
+                onChange={(e) => setStockFilter(e.target.value)}
+                className="p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="all">All Stock</option>
+                <option value="inStock">In Stock</option>
+                <option value="outOfStock">Out of Stock</option>
+              </select>
+            </div>
+            <div className="mt-6 flex gap-4">
+              <button
+                onClick={handleResetFilters}
+                className="w-full py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+              >
+                Reset Filters
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {filteredProducts.length === 0 ? (
         <p className="text-center text-gray-500">No products match your filters.</p>

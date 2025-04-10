@@ -26,3 +26,19 @@
     animation: none;
   }
   
+  /* Fade to right exit animation */
+@keyframes fadeToRight {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+/* Class to apply the exit animation */
+.fade-exit {
+  animation: fadeToRight 300ms ease-in-out forwards;
+}

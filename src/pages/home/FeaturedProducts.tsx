@@ -63,7 +63,7 @@ const FeaturedProducts = () => {
         <p className="text-center text-gray-500">No products available.</p>
       ) : (
         <div className="grid lg:!grid-cols-4 grid-cols-1 gap-4">
-          {products.slice(0, 8).map((product) => {
+          {products.slice(0, 6).map((product) => {
             const inCart = isProductInCart(product._id);
             const outOfStock = product.quantity === 0;
             return (
