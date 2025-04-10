@@ -38,7 +38,7 @@ function Login() {
           dispatch(
             setUser({
               user: user,
-              token: response?.data?.accessToken,
+              token: response?.data?.data?.accessToken,
             })
           );
           navigate("/");
