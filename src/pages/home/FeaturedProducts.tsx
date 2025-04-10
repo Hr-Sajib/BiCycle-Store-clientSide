@@ -102,7 +102,7 @@ const FeaturedProducts = () => {
                     }}
                     className={`p-4 py-2 text-white rounded-tl-xl ${
                       outOfStock
-                        ? "bg-gray-700"
+                        ? "bg-gray-400"
                         : inCart
                         ? "bg-gray-300"
                         : "bg-black hover:bg-gray-700"

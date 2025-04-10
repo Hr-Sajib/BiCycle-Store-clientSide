@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { TProduct } from "@/redux/features/products/productSlice";
-import { useDeleteProductMutation, useUpdateProductMutation } from "@/redux/features/products/productsApi";
+import {
+  useDeleteProductMutation,
+  useUpdateProductMutation,
+  useGetAllProductsQuery,
+} from "@/redux/features/products/productsApi";
 import { toast } from "sonner";
-
 
 interface UpdateProductModalProps {
   product: TProduct;
@@ -21,6 +24,8 @@ const UpdateProductModal: React.FC<UpdateProductModalProps> = ({ product, onClos
     inStock: product.inStock,
   });
 
+  const [search] = useState<string>(""); // Match AdminDashboard search state (empty for now)
+  const { refetch } = useGetAllProductsQuery({ search: search || undefined }); // Refetch with same search
   const [updateProduct, { isLoading: isUpdating, error: updateError }] = useUpdateProductMutation();
   const [deleteProduct, { isLoading: isDeleting, error: deleteError }] = useDeleteProductMutation();
 
@@ -40,25 +45,25 @@ const UpdateProductModal: React.FC<UpdateProductModalProps> = ({ product, onClos
         data: formData,
       }).unwrap();
       console.log("Product updated successfully:", response.data);
-      toast("Product updated successfully")
-      toast('✅ Product updated successfully..');
-      onClose(); 
+      toast("✅ Product updated successfully.");
+      await refetch(); // Refetch the products list
+      onClose(); // Close modal after refetch
     } catch (err) {
       console.error("Failed to update product:", err);
-      toast("❌ Failed to update product(See console)")
-
+      toast("❌ Failed to update product (See console)");
     }
   };
 
   const handleDelete = async () => {
-      try {
-        await deleteProduct(product._id).unwrap();
-        console.log("Product deleted successfully");
-        toast("✅ Product deleted successfully")
-        onClose(); // Close modal on success
-      } catch (err) {
-        console.error("Failed to delete product:", err);
-        toast("❌ Failed to delete product(See console)")
+    try {
+      await deleteProduct(product._id).unwrap();
+      console.log("Product deleted successfully");
+      toast("🗑️ Product deleted successfully.");
+      await refetch(); // Refetch the products list
+      onClose(); // Close modal after refetch
+    } catch (err) {
+      console.error("Failed to delete product:", err);
+      toast("❌ Failed to delete product (See console)");
     }
   };
 
@@ -165,8 +170,12 @@ const UpdateProductModal: React.FC<UpdateProductModalProps> = ({ product, onClos
             </label>
           </div>
 
-          {updateError && <p className="text-red-500 mb-4">Update Error: {JSON.stringify(updateError)}</p>}
-          {deleteError && <p className="text-red-500 mb-4">Delete Error: {JSON.stringify(deleteError)}</p>}
+          {updateError && (
+            <p className="text-red-500 mb-4">Update Error: {JSON.stringify(updateError)}</p>
+          )}
+          {deleteError && (
+            <p className="text-red-500 mb-4">Delete Error: {JSON.stringify(deleteError)}</p>
+          )}
 
           <div className="flex justify-between space-x-2">
             <button
@@ -174,7 +183,7 @@ const UpdateProductModal: React.FC<UpdateProductModalProps> = ({ product, onClos
               onClick={handleDelete}
               disabled={isDeleting || isUpdating}
               className={`py-2 px-4 bg-red-500 text-white rounded-md hover:bg-red-600 ${
-                (isDeleting || isUpdating) ? "opacity-50 cursor-not-allowed" : ""
+                isDeleting || isUpdating ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
               {isDeleting ? "Deleting..." : "Delete"}
@@ -191,7 +200,7 @@ const UpdateProductModal: React.FC<UpdateProductModalProps> = ({ product, onClos
                 type="submit"
                 disabled={isUpdating || isDeleting}
                 className={`py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 ${
-                  (isUpdating || isDeleting) ? "opacity-50 cursor-not-allowed" : ""
+                  isUpdating || isDeleting ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >
                 {isUpdating ? "Saving..." : "Save"}

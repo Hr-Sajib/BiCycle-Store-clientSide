@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { TOrder } from "@/redux/features/order/orderSlice";
-import { useUpdateOrderMutation } from "@/redux/features/order/orderApi";
+import {
+  useUpdateOrderMutation,
+  useDeleteOrderMutation,
+  useGetAllOrdersQuery,
+} from "@/redux/features/order/orderApi";
 import { toast } from "sonner";
 
 interface UpdateOrderModalProps {
@@ -17,7 +21,9 @@ const UpdateOrderModal: React.FC<UpdateOrderModalProps> = ({ order, onClose }) =
     status: order.status,
   });
 
+  const { refetch } = useGetAllOrdersQuery(); // Add refetch for getAllOrders
   const [updateOrder, { isLoading: isUpdating, error: updateError }] = useUpdateOrderMutation();
+  const [deleteOrder, { isLoading: isDeleting, error: deleteError }] = useDeleteOrderMutation();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -35,12 +41,25 @@ const UpdateOrderModal: React.FC<UpdateOrderModalProps> = ({ order, onClose }) =
         data: formData,
       }).unwrap();
       console.log("Order updated successfully:", response.data);
-      toast('✅ Order updated successfully..');
-      onClose(); // Close modal on success
+      toast("✅ Order updated successfully.");
+      await refetch(); // Refetch the orders list
+      onClose(); // Close modal after refetch
     } catch (err) {
       console.error("Failed to update order:", err);
-      toast('❌Order update error!');
+      toast("❌ Order update error!");
+    }
+  };
 
+  const handleDelete = async () => {
+    try {
+      await deleteOrder(order._id).unwrap();
+      console.log("Order deleted successfully");
+      toast("🗑️ Order deleted successfully.");
+      await refetch(); // Refetch the orders list
+      onClose(); // Close modal after refetch
+    } catch (err) {
+      console.error("Failed to delete order:", err);
+      toast("❌ Order deletion error!");
     }
   };
 
@@ -111,25 +130,42 @@ const UpdateOrderModal: React.FC<UpdateOrderModalProps> = ({ order, onClose }) =
             </select>
           </div>
 
-          {updateError && <p className="text-red-500 mb-4">Update Error: {JSON.stringify(updateError)}</p>}
+          {updateError && (
+            <p className="text-red-500 mb-4">Update Error: {JSON.stringify(updateError)}</p>
+          )}
+          {deleteError && (
+            <p className="text-red-500 mb-4">Delete Error: {JSON.stringify(deleteError)}</p>
+          )}
 
-          <div className="flex justify-end space-x-2">
+          <div className="flex justify-between items-center space-x-2">
             <button
               type="button"
-              onClick={onClose}
-              className="py-2 px-4 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isUpdating}
-              className={`py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 ${
-                isUpdating ? "opacity-50 cursor-not-allowed" : ""
+              onClick={handleDelete}
+              disabled={isDeleting || isUpdating}
+              className={`py-2 px-4 bg-red-500 text-white rounded-md hover:bg-red-600 ${
+                isDeleting || isUpdating ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              {isUpdating ? "Saving..." : "Save"}
+              {isDeleting ? "Deleting..." : "Delete"}
             </button>
+            <div className="flex space-x-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="py-2 px-4 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isUpdating || isDeleting}
+                className={`py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 ${
+                  isUpdating || isDeleting ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+                {isUpdating ? "Saving..." : "Save"}
+              </button>
+            </div>
           </div>
         </form>
       </div>

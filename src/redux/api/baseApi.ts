@@ -21,6 +21,8 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
+// http://localhost:5100/
+// https://bi-cycle-store-server-nu.vercel.app
 // Define an interface for the expected error data structure
 interface ErrorData {
   message?: string;

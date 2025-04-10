@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAllUsers, setAllUsers, deactivateUser } from "@/redux/features/user/allUserSlice";
 import { useGetAllUsersQuery, useToggleUserStatusMutation } from "@/redux/features/user/allUserApi";
-import { selectProducts, TProduct } from "@/redux/features/products/productSlice";
+import { selectProducts, setProducts, TProduct } from "@/redux/features/products/productSlice";
 import { useGetAllOrdersQuery } from "@/redux/features/order/orderApi";
 import { setOrders, TOrder } from "@/redux/features/order/orderSlice";
+import { useGetAllProductsQuery } from "@/redux/features/products/productsApi"; // Add this import
 import UpdateProductModal from "./UpdateProductModal";
 import AddProductModal from "./AddProductModal";
 import UpdateOrderModal from "./UpdateOrderModal";
@@ -19,8 +20,15 @@ const AdminDashboard = () => {
   const users = useSelector(selectAllUsers);
   const products = useSelector(selectProducts); // Get products from Redux store
 
+  // State for search (optional, can be expanded later)
+  const [search, setSearch] = useState<string>("");
+
   // Fetch all users using RTK Query
   const { data: userData, isLoading: isUsersLoading, error: userError } = useGetAllUsersQuery();
+
+  const { data, isLoading: isProductsLoading, error: productError } = useGetAllProductsQuery({
+    search: search || undefined,
+  });
 
   // Fetch all orders using RTK Query
   const { data: orderData, isLoading: isOrdersLoading, error: orderError } = useGetAllOrdersQuery();
@@ -39,6 +47,16 @@ const AdminDashboard = () => {
       dispatch(setAllUsers(userData.data));
     }
   }, [userData, dispatch]);
+
+ // Set fetched products into Redux store (following AllProducts pattern)
+ useEffect(() => {
+  if (data?.data) {
+    const productsArray = Array.isArray(data.data) ? data.data : data.data.products;
+    if (productsArray) {
+      dispatch(setProducts(productsArray));
+    }
+  }
+}, [data, dispatch]);
 
   // Set fetched orders into Redux store
   useEffect(() => {
@@ -69,7 +87,7 @@ const AdminDashboard = () => {
   const openUpdateOrderModal = (order: TOrder) => setSelectedOrder(order);
   const closeUpdateOrderModal = () => setSelectedOrder(null);
 
-  if (isUsersLoading) {
+  if (isUsersLoading || isProductsLoading || isOrdersLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-gray-500">Loading...</p>
@@ -77,10 +95,16 @@ const AdminDashboard = () => {
     );
   }
 
-  if (userError) {
+  if (userError || productError || orderError) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-red-500">Error loading users: {JSON.stringify(userError)}</p>
+        <p className="text-red-500">
+          {userError
+            ? `Error loading users: ${JSON.stringify(userError)}`
+            : productError
+            ? `Error loading products: ${JSON.stringify(productError)}`
+            : `Error loading orders: ${JSON.stringify(orderError)}`}
+        </p>
       </div>
     );
   }
@@ -188,15 +212,7 @@ const AdminDashboard = () => {
         <p className="text-center text-gray-300">You can go to All Products to add products and create an order</p>
       </div>
 
-      {isOrdersLoading ? (
-        <div className="flex items-center justify-center">
-          <p className="text-gray-500">Loading orders...</p>
-        </div>
-      ) : orderError ? (
-        <div className="flex items-center justify-center">
-          <p className="text-red-500">Error loading orders: {JSON.stringify(orderError)}</p>
-        </div>
-      ) : orderData?.data && orderData.data.length > 0 ? (
+      {orderData?.data && orderData.data.length > 0 ? (
         <div className="overflow-x-auto mb-12">
           <table className="lg:!w-[70vw] mx-auto bg-white shadow-md rounded-lg overflow-hidden table-fixed">
             <thead className="bg-gray-200">
