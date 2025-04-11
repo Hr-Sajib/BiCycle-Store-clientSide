@@ -305,15 +305,15 @@ const AllProducts = () => {
             return (
               <div
                 key={product._id}
-                className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer"
                 onClick={() => handleProductClick(product._id)}
-                data-aos="fade-up"
+                // data-aos="fade-up"
                 data-aos-delay={index * 100}
               >
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="w-full h-60 object-cover"
+                  className="w-full h-80 object-cover"
                 />
                 <div className="p-4">
                   <h3 className="text-lg font-medium text-gray-900 truncate">{product.name}</h3>

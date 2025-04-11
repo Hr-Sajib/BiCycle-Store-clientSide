@@ -4,8 +4,17 @@ import { useParams } from "react-router-dom";
 import { selectProducts, setProducts } from "@/redux/features/products/productSlice";
 import { addToCart, selectCart } from "@/redux/features/cart/cartSlice";
 import { useGetSingleProductQuery } from "./productsApi"; // Updated to use getSingleProduct
+import Aos from "aos";
 
 const ProductDetails = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+    Aos.init({
+      duration: 600,
+      once: true,
+      offset: 20,
+    });
+  }, []);
   const { productId } = useParams<{ productId: string }>(); // Get productId from URL
   const dispatch = useDispatch();
   const products = useSelector(selectProducts);
@@ -42,11 +51,14 @@ const ProductDetails = () => {
 
   const inCart = isProductInCart(product._id);
 
+  
+
   return (
     <div className="py-8 px-4 max-w-4xl mx-auto mt-20">
       <h2 className="text-3xl font-semibold text-gray-800 mb-6">{product.name}</h2>
-      <div className="bg-white rounded-lg shadow-sm p-6 flex flex-col md:flex-row gap-6">
+      <div data-aos='fade-down' className="bg-white rounded-lg shadow-sm p-6 flex flex-col md:flex-row gap-6">
         <img
+        data-aos='zoom-in'
           src={product.image}
           alt={product.name}
           className="w-full h-[50vh] md:w-1/2 h-64 object-cover rounded-md"

@@ -62,7 +62,7 @@ const FeaturedProducts = () => {
       {products.length === 0 ? (
         <p className="text-center text-gray-500">No products available.</p>
       ) : (
-        <div className="grid lg:!grid-cols-4 grid-cols-1 gap-4">
+        <div className="grid lg:!grid-cols-3f grid-cols-1 gap-4">
           {products.slice(0, 6).map((product) => {
             const inCart = isProductInCart(product._id);
             const outOfStock = product.quantity === 0;
@@ -70,13 +70,13 @@ const FeaturedProducts = () => {
               <div
                 data-aos="fade-up"
                 key={product._id}
-                className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer"
                 onClick={() => handleProductClick(product._id)}
               >
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="w-full h-60 object-cover"
+                  className="w-full h-80 object-cover"
                 />
                 <div className="p-4">
                   <h3 className="text-lg font-medium text-gray-900 truncate">{product.name}</h3>

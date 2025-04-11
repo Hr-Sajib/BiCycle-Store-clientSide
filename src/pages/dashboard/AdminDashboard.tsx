@@ -21,7 +21,7 @@ const AdminDashboard = () => {
   const products = useSelector(selectProducts); // Get products from Redux store
 
   // State for search (optional, can be expanded later)
-  const [search, setSearch] = useState<string>("");
+  const [search] = useState<string>("");
 
   // Fetch all users using RTK Query
   const { data: userData, isLoading: isUsersLoading, error: userError } = useGetAllUsersQuery();
