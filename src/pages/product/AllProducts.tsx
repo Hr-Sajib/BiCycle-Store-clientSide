@@ -332,22 +332,25 @@ const AllProducts = () => {
                 </div>
                 <div className="flex justify-between items-center">
                   <p className="ml-4 mb-1 text-xl text-blue-700">${product.price}</p>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleAddToCart(product._id);
-                    }}
-                    className={`p-4 py-2 text-white rounded-tl-xl ${
-                      outOfStock
-                        ? "bg-gray-400"
-                        : inCart
-                        ? "bg-gray-300"
-                        : "bg-black hover:bg-gray-700"
-                    }`}
-                    disabled={outOfStock}
-                  >
-                    {inCart && !outOfStock ? "Added" : "Add"}
-                  </button>
+                  <div className="flex gap-1">
+                    <button onClick={()=>handleProductClick(product._id)} className="bg-black text-white p-4 py-2 rounded-t-xl">Details</button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToCart(product._id);
+                      }}
+                      className={`p-4 py-2 text-white rounded-tl-xl ${
+                        outOfStock
+                          ? "bg-gray-400"
+                          : inCart
+                          ? "bg-gray-300"
+                          : "bg-black hover:bg-gray-700"
+                      }`}
+                      disabled={outOfStock}
+                    >
+                      {inCart && !outOfStock ? "Added" : "Add"}
+                    </button>
+                  </div>
                 </div>
               </div>
             );

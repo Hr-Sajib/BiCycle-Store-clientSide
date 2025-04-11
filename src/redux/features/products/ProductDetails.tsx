@@ -45,7 +45,7 @@ const ProductDetails = () => {
     return cart.some((item) => item.productId === productId);
   };
 
-  if (isLoading) return <div className="text-center py-8 text-gray-500">Loading...</div>;
+  if (isLoading) return <div className="text-center py-8 mt-[30vh] text-gray-500">Loading...</div>;
   if (error) return <div className="text-center py-8 text-red-600">Error loading product details: {JSON.stringify(error)}</div>;
   if (!product) return <div className="text-center py-8 text-gray-500">Product not found</div>;
 

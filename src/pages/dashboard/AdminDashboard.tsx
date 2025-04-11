@@ -89,7 +89,7 @@ const AdminDashboard = () => {
 
   if (isUsersLoading || isProductsLoading || isOrdersLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center mt-[30vh] justify-center">
         <p className="text-gray-500">Loading...</p>
       </div>
     );
