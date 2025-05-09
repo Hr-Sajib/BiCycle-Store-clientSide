@@ -297,7 +297,7 @@ const AllProducts = () => {
       {filteredProducts.length === 0 ? (
         <p className="text-center text-gray-500">No products match your filters.</p>
       ) : (
-        <div className="grid lg:!grid-cols-4 grid-cols-1 gap-4">
+        <div className="grid lg:!grid-cols-3 grid-cols-1 gap-4">
           {filteredProducts.map((product, index) => {
             const inCart = isProductInCart(product._id);
             const outOfStock = product.quantity === 0;
@@ -308,7 +308,7 @@ const AllProducts = () => {
                 className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer"
                 onClick={() => handleProductClick(product._id)}
                 // data-aos="fade-up"
-                data-aos-delay={index * 100}
+                data-aos="zoom-out"
               >
                 <img
                   src={product.image}

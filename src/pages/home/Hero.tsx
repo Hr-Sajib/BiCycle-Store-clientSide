@@ -22,16 +22,16 @@ const Hero = () => {
   }, [imagesArray.length]);
 
   return (
-    <div className="font-josefin-sans lg:!h-[100vh] h-[30vh] lg:!mt-0 mt-26">
+    <div className="font-josefin-sans lg:!h-[87vh] h-[30vh]">
       {/* Swiper Container */}
-      <div className="relative w-full h-[92vh] overflow-hidden">
+      <div className="relative w-full lg:!h-[87vh] h-[92vh] overflow-hidden">
         {/* Images */}
         {imagesArray.map((image, index) => (
           <img
             key={index}
             src={image}
             alt={`Slide ${index}`}
-            className={`absolute top-0 left-0 lg:!h-[92vh] w-full h-[30%] object-cover transition-opacity duration-500 ${
+            className={`absolute top-0 left-0 lg:!h-[87vh] w-full h-[30%] object-cover transition-opacity duration-500 ${
               index === currentIndex ? "opacity-100" : "opacity-0"
             }`}
           />

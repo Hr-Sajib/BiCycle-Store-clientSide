@@ -68,8 +68,8 @@ const FeaturedProducts = () => {
             const outOfStock = product.quantity === 0;
             return (
               <div
-                data-aos="fade-up"
-                key={product._id}
+              data-aos="zoom-in"
+              key={product._id}
                 className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer"
                 onClick={() => handleProductClick(product._id)}
               >
@@ -96,7 +96,7 @@ const FeaturedProducts = () => {
                 <div className="flex justify-between items-center">
                   <p className="ml-4 mb-1 text-xl text-blue-700">${product.price}</p>
                   <div className="flex gap-1">
-                    <button onClick={()=>handleProductClick(product._id)} className="bg-black text-white p-4 py-2 rounded-t-xl">Details</button>
+                    <button onClick={()=>handleProductClick(product._id)} className="bg-black hover:bg-gray-800 text-white p-4 py-2 rounded-t-xl">Details</button>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();

@@ -56,12 +56,12 @@ const ProductDetails = () => {
   return (
     <div className="py-8 px-4 max-w-4xl mx-auto mt-20">
       <h2 className="text-3xl font-semibold text-gray-800 mb-6">{product.name}</h2>
-      <div data-aos='fade-down' className="bg-white rounded-lg shadow-sm p-6 flex flex-col md:flex-row gap-6">
+      <div data-aos='fade-down' className="bg-white rounded-lg p-6 flex flex-col md:flex-row gap-6">
         <img
         data-aos='zoom-in'
           src={product.image}
           alt={product.name}
-          className="w-full h-[50vh] md:w-1/2 h-64 object-cover rounded-md"
+          className="lg:!w-[30vw] h-[45vh] md:w-1/2 object-cover rounded-md"
         />
         <div className="flex-1">
           <div className="flex items-center mb-2">

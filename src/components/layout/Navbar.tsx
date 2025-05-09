@@ -12,8 +12,7 @@ const Navbar = () => {
   const handleLogout = () => {
     dispatch(logout());
     setIsMenuOpen(false);
-    toast('✅ Logged Out');
-
+    toast("✅ Logged Out");
   };
 
   const toggleMenu = () => {
@@ -21,7 +20,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="bg-black text-white w-full lg:max-w-[90vw] max-w-[95vw] mx-auto rounded-md mt-5 flex justify-between items-center fixed top-0 left-0 right-0 p-4 z-50">
+    <div className="sticky bg-white border-b-1 border-black top-0 w-full mx-auto mt-5 flex justify-between items-center p-4 z-50">
       {/* Brand */}
       <Link to="/" className="font-bold text-2xl flex gap-1 items-center">
         <p className="bg-white rounded-full w-8 h-8 flex justify-center items-center">🛞</p>
@@ -33,26 +32,26 @@ const Navbar = () => {
         className="md:hidden text-3xl focus:outline-none"
         onClick={toggleMenu}
       >
-        ☰
+        {!isMenuOpen ? "☰" : "x"}
       </button>
 
       {/* Mobile Navigation Menu */}
       <nav
         className={`${
           isMenuOpen ? "block mobile-nav" : "hidden"
-        } md:flex md:items-center mt-2 md:gap-5 absolute md:static top-16 left-0 w-full md:w-auto bg-black md:bg-transparent p-4 md:p-0 rounded-md md:rounded-none transition-all duration-300 z-40`}
+        } md:flex md:items-center mt-2 md:gap-5 absolute md:static top-16 left-0 w-full md:w-auto bg-gray-100 md:bg-transparent p-4 md:p-0 rounded-md md:rounded-none transition-all duration-300 z-40`}
       >
         <Link
           to="/"
           onClick={() => setIsMenuOpen(false)}
-          className="block md:inline-block py-2 md:py-0 hover:text-gray-300"
+          className="block md:inline-block py-2 md:py-0 hover:text-gray-500"
         >
           Shop Now
         </Link>
         <Link
           to="/allProducts"
           onClick={() => setIsMenuOpen(false)}
-          className="block md:inline-block py-2 md:py-0 hover:text-gray-300"
+          className="block md:inline-block py-2 md:py-0 hover:text-gray-500"
         >
           All Products
         </Link>
@@ -60,7 +59,7 @@ const Navbar = () => {
           <Link
             to="/adminDashboard"
             onClick={() => setIsMenuOpen(false)}
-            className="block md:inline-block py-2 md:py-0 hover:text-gray-300"
+            className="block md:inline-block py-2 md:py-0 hover:text-gray-500"
           >
             Admin Dashboard
           </Link>
@@ -68,7 +67,7 @@ const Navbar = () => {
           <Link
             to="/userDashboard"
             onClick={() => setIsMenuOpen(false)}
-            className="block md:inline-block py-2 md:py-0 hover:text-gray-300"
+            className="block md:inline-block py-2 md:py-0 hover:text-gray-500"
           >
             Dashboard
           </Link>
@@ -76,19 +75,17 @@ const Navbar = () => {
         <Link
           to="/checkout"
           onClick={() => setIsMenuOpen(false)}
-          className="block md:inline-block py-2 md:py-0 hover:text-gray-300"
+          className="block md:inline-block py-2 md:py-0 hover:text-gray-500"
         >
           Check Out
         </Link>
-
         <Link
           to="/about"
           onClick={() => setIsMenuOpen(false)}
-          className="block md:inline-block py-2 md:py-0 hover:text-gray-300"
+          className="block md:inline-block py-2 md:py-0 hover:text-gray-500"
         >
           About Us
         </Link>
-
         {user ? (
           <button
             onClick={handleLogout}
@@ -107,16 +104,29 @@ const Navbar = () => {
         )}
       </nav>
 
-      {/* lg menu  */}
+      {/* lg menu */}
       <nav className="hidden lg:!flex items-center gap-5">
-        <Link className="mr-5" to="/">Shop Now</Link>
-        <Link className="mr-5" to="/allProducts">All Products</Link>
-        <Link className="mr-5" to="/about">About Us</Link>
-        {
-          user?.role=='admin' ?<Link className="mr-5" to="/adminDashboard">Admin Dashboard</Link> :
-          <Link className="mr-5" to="/userDashboard">Dashboard</Link>
-        }
-        <Link className="mr-5" to="/checkout">Check Out</Link>
+        <Link className="mr-5" to="/">
+          Shop Now
+        </Link>
+        <Link className="mr-5" to="/allProducts">
+          All Products
+        </Link>
+        <Link className="mr-5" to="/about">
+          About Us
+        </Link>
+        {user?.role === "admin" ? (
+          <Link className="mr-5" to="/adminDashboard">
+            Admin Dashboard
+          </Link>
+        ) : (
+          <Link className="mr-5" to="/userDashboard">
+            Dashboard
+          </Link>
+        )}
+        <Link className="mr-5" to="/checkout">
+          Check Out
+        </Link>
         {user ? (
           <button
             onClick={handleLogout}

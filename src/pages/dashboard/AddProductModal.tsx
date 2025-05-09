@@ -1,14 +1,25 @@
 import { useCreateProductMutation } from "@/redux/features/products/productsApi"; // Adjust path
 import { TProduct } from "@/redux/features/products/productSlice"; // Adjust path
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { postImage } from "@/utils/postImage"; // Adjust path
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 interface AddProductModalProps {
   onClose: () => void;
 }
 
 const AddProductModal: React.FC<AddProductModalProps> = ({ onClose }) => {
+
+   useEffect(() => {
+       AOS.init({
+            duration: 600,
+            once: true,
+            offset: 20,
+          });
+    }, []);
+
   const [formData, setFormData] = useState({
     name: "",
     brand: "",
@@ -78,7 +89,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 backdrop-blur-xl flex items-center justify-center z-50">
+    <div data-aos="zoom-in" className="fixed inset-0 backdrop-blur-xl flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-lg">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Add New Product</h2>
         <form onSubmit={handleSubmit}>
@@ -194,7 +205,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose }) => {
             <button
               type="submit"
               disabled={isCreating || isUploading}
-              className={`py-2 px-4 bg-green-500 text-white rounded-md hover:bg-green-600 ${
+              className={`py-2 px-4 bg-blue-700 text-white rounded-md hover:bg-green-600 ${
                 (isCreating || isUploading) ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >

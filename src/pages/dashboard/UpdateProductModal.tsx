@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TProduct } from "@/redux/features/products/productSlice";
 import {
   useDeleteProductMutation,
@@ -11,8 +11,21 @@ interface UpdateProductModalProps {
   product: TProduct;
   onClose: () => void;
 }
+import AOS from "aos";
+import "aos/dist/aos.css";
+
 
 const UpdateProductModal: React.FC<UpdateProductModalProps> = ({ product, onClose }) => {
+
+  useEffect(() => {
+           AOS.init({
+                duration: 600,
+                once: true,
+                offset: 20,
+              });
+        }, []);
+
+
   const [formData, setFormData] = useState({
     name: product.name,
     brand: product.brand,
@@ -68,7 +81,7 @@ const UpdateProductModal: React.FC<UpdateProductModalProps> = ({ product, onClos
   };
 
   return (
-    <div className="fixed inset-0 backdrop-blur-xl flex items-center justify-center z-50">
+    <div data-aos="zoom-in" className="fixed inset-0 backdrop-blur-xl flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-lg">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Update Product</h2>
         <form onSubmit={handleSubmit}>

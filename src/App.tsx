@@ -7,14 +7,13 @@ import { Link } from "react-router-dom";
 import Footer from "./components/layout/Footer";
 // Import the Swiper styles
 
-
 function App() {
   const cart = useSelector(selectCart); // Fetch cart data from Redux store
   const cartItemCount = cart.length; // Number of unique products in cart
 
   return (
-    <>
-      <Navbar />
+    <div className="">
+      <Navbar/> {/* Added class for styling */}
       <div className="min-h-[60vh]">
         <Link to="checkOut">
           <div className="fixed top-[90vh] lg:left-[92vw] left-[85vw] bg-blue-500 text-white p-3 rounded-sm z-20">
@@ -26,8 +25,8 @@ function App() {
         </Link>
         <Outlet />
       </div>
-      <Footer/>
-    </>
+      <Footer />
+    </div>
   );
 }
 

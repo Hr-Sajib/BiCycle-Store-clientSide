@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TOrder } from "@/redux/features/order/orderSlice";
 import {
   useUpdateOrderMutation,
@@ -6,6 +6,9 @@ import {
   useGetAllOrdersQuery,
 } from "@/redux/features/order/orderApi";
 import { toast } from "sonner";
+import AOS from "aos";
+import "aos/dist/aos.css";
+
 
 interface UpdateOrderModalProps {
   order: TOrder;
@@ -13,6 +16,14 @@ interface UpdateOrderModalProps {
 }
 
 const UpdateOrderModal: React.FC<UpdateOrderModalProps> = ({ order, onClose }) => {
+     useEffect(() => {
+         AOS.init({
+              duration: 600,
+              once: true,
+              offset: 20,
+            });
+      }, []);
+
   const [formData, setFormData] = useState({
     userEmail: order.userEmail,
     totalPrice: order.totalPrice,
@@ -64,7 +75,7 @@ const UpdateOrderModal: React.FC<UpdateOrderModalProps> = ({ order, onClose }) =
   };
 
   return (
-    <div className="fixed inset-0 backdrop-blur-xl flex items-center justify-center z-50">
+    <div data-aos="zoom-in" className="fixed inset-0 backdrop-blur-xl flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-lg">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Update Order</h2>
         <form onSubmit={handleSubmit}>

@@ -5,15 +5,15 @@ import {
   BaseQueryFn,
   FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
-import { RootState } from "../store"; // Adjust path to your store
-import { setUser, logout } from "../features/auth/authSlice"; // Adjust path to your auth slice
+import { RootState } from "../store";
+import { setUser, logout } from "../features/auth/authSlice"; 
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "https://bi-cycle-store-server-nu.vercel.app/api",
+  baseUrl: "https://bi-cycle-store-server-nu.vercel.app",
   credentials: "include", // For sending cookies (e.g., refresh token)
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token; // Get token from auth slice
-    console.log("Preparing headers with token:", token);
+    // console.log("Preparing headers with token:", token);
     if (token) {
       headers.set("Authorization", `${token}`);
     }
@@ -21,12 +21,9 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
-// http://localhost:5100/
-// https://bi-cycle-store-server-nu.vercel.app
-// Define an interface for the expected error data structure
+
 interface ErrorData {
   message?: string;
-  [key: string]: any; // Allow additional properties
 }
 
 const baseQueryWithRefreshToken: BaseQueryFn<
@@ -87,3 +84,10 @@ export const baseApi = createApi({
   baseQuery: baseQueryWithRefreshToken,
   endpoints: () => ({}),
 });
+
+
+
+
+// http://localhost:5100/
+// https://bi-cycle-store-server-nu.vercel.app
+// Define an interface for the expected error data structure

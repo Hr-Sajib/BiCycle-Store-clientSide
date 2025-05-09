@@ -10,10 +10,18 @@ import UpdateProductModal from "./UpdateProductModal";
 import AddProductModal from "./AddProductModal";
 import UpdateOrderModal from "./UpdateOrderModal";
 import { toast } from "sonner";
+import AOS from "aos";
+import "aos/dist/aos.css";
+
 
 const AdminDashboard = () => {
   useEffect(() => {
     window.scrollTo({ top: 0 });
+     AOS.init({
+          duration: 600,
+          once: true,
+          offset: 20,
+        });
   }, []);
 
   const dispatch = useDispatch();
@@ -110,7 +118,8 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen p-6 mt-24">
+    <div         data-aos="fade-down"
+    className="min-h-screen p-6 mt-24">
       {/* Users Section */}
       <h1 className="text-3xl font-bold text-gray-400 mb-6 text-center">Admin Dashboard</h1>
       <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Users</h2>
@@ -158,7 +167,7 @@ const AdminDashboard = () => {
       )}
 
       {/* Products Section */}
-      <div className="flex justify-center gap-5 items-center mb-6">
+      <div data-aos="fade-down" className="flex justify-center gap-5 items-center mb-6">
         <h2 className="text-3xl font-bold text-gray-800 text-center">Products</h2>
         <button
           onClick={openAddModal}
@@ -169,7 +178,7 @@ const AdminDashboard = () => {
       </div>
 
       {products.length > 0 ? (
-        <div className="overflow-x-auto mb-12">
+        <div data-aos="fade-down" className="overflow-x-auto mb-12">
           <table className="lg:!w-[70vw] mx-auto bg-white shadow-md rounded-lg overflow-hidden table-fixed">
             <thead className="bg-gray-200">
               <tr>
@@ -213,7 +222,7 @@ const AdminDashboard = () => {
       </div>
 
       {orderData?.data && orderData.data.length > 0 ? (
-        <div className="overflow-x-auto mb-12">
+        <div data-aos="fade-down" className="overflow-x-auto mb-12">
           <table className="lg:!w-[70vw] mx-auto bg-white shadow-md rounded-lg overflow-hidden table-fixed">
             <thead className="bg-gray-200">
               <tr>
