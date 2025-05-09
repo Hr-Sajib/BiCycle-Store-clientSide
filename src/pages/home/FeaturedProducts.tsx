@@ -57,13 +57,13 @@ const FeaturedProducts = () => {
   if (error) return <div className="text-center py-8 text-red-600">Error loading products: {JSON.stringify(error)}</div>;
 
   return (
-    <div className="py-8 px-4 max-w-7xl mx-auto">
+    <div className="py-8 lg:max-w-[80vw] px-4 lg:px-0 mx-auto">
       <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">Featured Products</h2>
       {products.length === 0 ? (
         <p className="text-center text-gray-500">No products available.</p>
       ) : (
-        <div className="grid lg:!grid-cols-3 grid-cols-1 gap-4">
-          {products.slice(0, 6).map((product) => {
+        <div className="grid lg:!grid-cols-4 grid-cols-1 gap-4">
+          {products.slice(0, 8).map((product) => {
             const inCart = isProductInCart(product._id);
             const outOfStock = product.quantity === 0;
             return (

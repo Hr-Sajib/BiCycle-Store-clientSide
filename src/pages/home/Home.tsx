@@ -5,6 +5,9 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Review from "./Reviews";
 import DiscountCouponSection from "./DiscountCouponSection";
+import ContactUs from "./ContactUs";
+import Branding from "./Branding";
+import AboutUs from "./AboutUs";
 
 const Home = () => {
 
@@ -37,7 +40,10 @@ const Home = () => {
             </Slider>
         </div>
             <FeaturedProducts/>
+            <Branding/>
             <DiscountCouponSection/>
+            <AboutUs/>
+            <ContactUs/>
             <Review/>
         </div>
     );
