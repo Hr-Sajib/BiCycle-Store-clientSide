@@ -46,7 +46,7 @@ const productApi = baseApi.injectEndpoints({
       query: (params = {}) => {
         const queryParams = new URLSearchParams();
 
-        console.log("query :", params)
+        // console.log("query :", params)
 
         if (params.search) queryParams.append("search", params.search);
         if (params.filter) queryParams.append("filter", params.filter);
@@ -57,7 +57,7 @@ const productApi = baseApi.injectEndpoints({
         if (params.fields) queryParams.append("fields", params.fields);
 
         return {
-          url: `api/products?${queryParams.toString()}`,
+          url: `/products?${queryParams.toString()}`,
           method: "GET",
         };
       },
@@ -66,7 +66,7 @@ const productApi = baseApi.injectEndpoints({
     // Get a single product by ID (GET /products/:productId)
     getSingleProduct: builder.query<ProductResponse, string>({
       query: (productId) => ({
-        url: `api//products/${productId}`,
+        url: `/products/${productId}`,
         method: "GET",
       }),
     }),
@@ -74,7 +74,7 @@ const productApi = baseApi.injectEndpoints({
     // Create a new product (POST /products/)
     createProduct: builder.mutation<ProductResponse, Partial<TProduct>>({
       query: (productData) => ({
-        url: "api//products",
+        url: "/products",
         method: "POST",
         body: productData,
       }),
@@ -86,7 +86,7 @@ const productApi = baseApi.injectEndpoints({
       { productId: string; data: Partial<TProduct> }
     >({
       query: ({ productId, data }) => ({
-        url: `api//products/${productId}`,
+        url: `/products/${productId}`,
         method: "PATCH",
         body: data,
       }),
@@ -95,7 +95,7 @@ const productApi = baseApi.injectEndpoints({
     // Delete a product by ID (DELETE /products/:productId)
     deleteProduct: builder.mutation<DeleteResponse, string>({
       query: (productId) => ({
-        url: `api//products/${productId}`,
+        url: `/products/${productId}`,
         method: "DELETE",
       }),
     }),

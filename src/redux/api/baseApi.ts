@@ -9,7 +9,7 @@ import { RootState } from "../store";
 import { setUser, logout } from "../features/auth/authSlice"; 
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "https://bi-cycle-store-server-nu.vercel.app",
+  baseUrl: "https://bi-cycle-store-server-nu.vercel.app/api",
   credentials: "include", // For sending cookies (e.g., refresh token)
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token; // Get token from auth slice
@@ -31,9 +31,9 @@ const baseQueryWithRefreshToken: BaseQueryFn<
   unknown,
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
-  console.log("Making request with args:", args);
+  // console.log("Making request with args:", args);
   let result = await baseQuery(args, api, extraOptions);
-  console.log("Initial request result:", result);
+  // console.log("Initial request result:", result);
 
   // Handle 401 or 500 with "jwt expired" message
   if (
@@ -75,7 +75,7 @@ const baseQueryWithRefreshToken: BaseQueryFn<
     }
   }
 
-  console.log("Final result returned:", result);
+  // console.log("Final result returned:", result);
   return result;
 };
 

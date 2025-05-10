@@ -1,79 +1,68 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { selectAllUsers, setAllUsers, deactivateUser } from "@/redux/features/user/allUserSlice";
+import { useDispatch } from "react-redux";
+import {  setAllUsers, deactivateUser } from "@/redux/features/user/allUserSlice";
 import { useGetAllUsersQuery, useToggleUserStatusMutation } from "@/redux/features/user/allUserApi";
-import { selectProducts, setProducts, TProduct } from "@/redux/features/products/productSlice";
+import {  setProducts, TProduct } from "@/redux/features/products/productSlice";
 import { useGetAllOrdersQuery } from "@/redux/features/order/orderApi";
 import { setOrders, TOrder } from "@/redux/features/order/orderSlice";
-import { useGetAllProductsQuery } from "@/redux/features/products/productsApi"; // Add this import
+import { useGetAllProductsQuery } from "@/redux/features/products/productsApi";
 import UpdateProductModal from "./UpdateProductModal";
 import AddProductModal from "./AddProductModal";
 import UpdateOrderModal from "./UpdateOrderModal";
 import { toast } from "sonner";
 import AOS from "aos";
 import "aos/dist/aos.css";
-
+import { NavLink, Outlet } from "react-router-dom";
+import { FaTimes } from "react-icons/fa";
 
 const AdminDashboard = () => {
   useEffect(() => {
     window.scrollTo({ top: 0 });
-     AOS.init({
-          duration: 600,
-          once: true,
-          offset: 20,
-        });
+    AOS.init({
+      duration: 600,
+      once: true,
+      offset: 20,
+    });
   }, []);
 
   const dispatch = useDispatch();
-  const users = useSelector(selectAllUsers);
-  const products = useSelector(selectProducts); // Get products from Redux store
-
-  // State for search (optional, can be expanded later)
   const [search] = useState<string>("");
 
-  // Fetch all users using RTK Query
   const { data: userData, isLoading: isUsersLoading, error: userError } = useGetAllUsersQuery();
-
   const { data, isLoading: isProductsLoading, error: productError } = useGetAllProductsQuery({
     search: search || undefined,
   });
-
-  // Fetch all orders using RTK Query
   const { data: orderData, isLoading: isOrdersLoading, error: orderError } = useGetAllOrdersQuery();
 
-  // Toggle user status mutation
-  const [toggleUserStatus, { isLoading: isToggling }] = useToggleUserStatusMutation();
+  console.log("error in order loading: ", orderError);
 
-  // State for modals
+  const [toggleUserStatus, { isLoading: isToggling }] = useToggleUserStatusMutation();
   const [selectedProduct, setSelectedProduct] = useState<TProduct | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<TOrder | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
-  // Set fetched users into Redux store
   useEffect(() => {
     if (userData?.success && userData.data) {
       dispatch(setAllUsers(userData.data));
     }
   }, [userData, dispatch]);
 
- // Set fetched products into Redux store (following AllProducts pattern)
- useEffect(() => {
-  if (data?.data) {
-    const productsArray = Array.isArray(data.data) ? data.data : data.data.products;
-    if (productsArray) {
-      dispatch(setProducts(productsArray));
+  useEffect(() => {
+    if (data?.data) {
+      const productsArray = Array.isArray(data.data) ? data.data : data.data.products;
+      if (productsArray) {
+        dispatch(setProducts(productsArray));
+      }
     }
-  }
-}, [data, dispatch]);
+  }, [data, dispatch]);
 
-  // Set fetched orders into Redux store
   useEffect(() => {
     if (orderData?.success && orderData.data) {
       dispatch(setOrders(orderData.data));
     }
   }, [orderData, dispatch]);
 
-  // Handle toggle status
   const handleToggleStatus = async (userId: string) => {
     try {
       dispatch(deactivateUser(userId));
@@ -87,7 +76,6 @@ const AdminDashboard = () => {
     }
   };
 
-  // Modal handlers
   const openUpdateModal = (product: TProduct) => setSelectedProduct(product);
   const closeUpdateModal = () => setSelectedProduct(null);
   const openAddModal = () => setIsAddModalOpen(true);
@@ -118,146 +106,146 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div         data-aos="fade-down"
-    className="min-h-screen p-6 mt-24">
-      {/* Users Section */}
-      <h1 className="text-3xl font-bold text-gray-400 mb-6 text-center">Admin Dashboard</h1>
-      <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Users</h2>
-      {users.length > 0 ? (
-        <div className="overflow-x-auto mb-12">
-          <table className="lg:!w-[70vw] mx-auto bg-white shadow-md rounded-lg overflow-hidden table-fixed">
-            <thead className="bg-gray-200">
-              <tr>
-                <th className="w-1/5 py-3 px-4 text-left text-sm font-semibold text-gray-700">Name</th>
-                <th className="w-2/5 py-3 px-4 text-left text-sm font-semibold text-gray-700">Email</th>
-                <th className="w-1/5 py-3 px-4 text-left text-sm font-semibold text-gray-700">Status</th>
-                <th className="w-1/5 py-3 px-4 text-left text-sm font-semibold text-gray-700">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user) => (
-                <tr key={user._id} className="border-b hover:bg-gray-50">
-                  <td className="w-1/5 py-3 px-4 text-sm text-gray-600 truncate">{user.name}</td>
-                  <td className="w-2/5 py-3 px-4 text-sm text-gray-600 truncate">{user.email}</td>
-                  <td className="w-1/5 py-3 px-4 text-sm text-gray-600 truncate">{user.status}</td>
-                  <td className="w-1/5 py-3 px-4 text-sm text-gray-600">
-                    <button
-                      onClick={() => handleToggleStatus(user._id)}
-                      disabled={isToggling}
-                      className={`py-1 px-3 rounded-sm text-white font-semibold whitespace-nowrap ${
-                        user.status === "active"
-                          ? "bg-red-500 hover:bg-red-600"
-                          : "bg-green-500 hover:bg-green-600"
-                      } ${isToggling ? "opacity-50 cursor-not-allowed" : ""}`}
-                    >
-                      {isToggling
-                        ? "Toggling..."
-                        : user.status === "active"
-                        ? "Deactivate"
-                        : "Activate"}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+    <div className="min-h-screen flex relative">
+      <button
+        onClick={() => setIsSidebarOpen(true)}
+        className="lg:!hidden fixed top-28 left-4 z-50 p-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+        title="Open Sidebar"
+      >
+        Options
+      </button>
+
+      {isSidebarOpen && (
+        <div data-aos="fade-right" className="fixed inset-0 z-50 lg:!hidden">
+          <div className="fixed top-0 left-0 w-64 h-full bg-gray-800 text-white p-6 shadow-lg transform transition-transform duration-300 ease-in-out">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold">Admin Panel</h2>
+              <button
+                onClick={() => setIsSidebarOpen(false)}
+                className="text-gray-300 hover:text-white"
+                title="Close Sidebar"
+              >
+                <FaTimes size={24} />
+              </button>
+            </div>
+            <nav>
+              <ul>
+                <li className="mb-4">
+                  <NavLink
+                    to="/adminDashboard"
+                    className={({ isActive }) =>
+                      `block py-2 px-4 rounded bg-gray-700${isActive ? "bg-gray-800" : "bg-gray-800"}`
+                    }
+                    onClick={() => setIsSidebarOpen(false)}
+                  >
+                    Overview
+                  </NavLink>
+                </li>
+                <li className="mb-4">
+                  <NavLink
+                    to="/adminDashboard/users"
+                    className={({ isActive }) =>
+                      `block py-2 px-4 rounded ${isActive ? "bg-gray-600" : "hover:bg-gray-700"}`
+                    }
+                    onClick={() => setIsSidebarOpen(false)}
+                  >
+                    Users
+                  </NavLink>
+                </li>
+                <li className="mb-4">
+                  <NavLink
+                    to="/adminDashboard/products"
+                    className={({ isActive }) =>
+                      `block py-2 px-4 rounded ${isActive ? "bg-gray-600" : "hover:bg-gray-700"}`
+                    }
+                    onClick={() => setIsSidebarOpen(false)}
+                  >
+                    Products
+                  </NavLink>
+                </li>
+                <li className="mb-4">
+                  <NavLink
+                    to="/adminDashboard/orders"
+                    className={({ isActive }) =>
+                      `block py-2 px-4 rounded ${isActive ? "bg-gray-600" : "hover:bg-gray-700"}`
+                    }
+                    onClick={() => setIsSidebarOpen(false)}
+                  >
+                    Orders
+                  </NavLink>
+                </li>
+              </ul>
+            </nav>
+          </div>
         </div>
-      ) : (
-        <p className="text-center text-gray-500 mt-4 mb-12">No users found.</p>
       )}
 
-      {/* Products Section */}
-      <div data-aos="fade-down" className="flex justify-center gap-5 items-center mb-6">
-        <h2 className="text-3xl font-bold text-gray-800 text-center">Products</h2>
-        <button
-          onClick={openAddModal}
-          className="rounded-sm bg-gray-200 p-3 hover:bg-gray-300 text-gray-800 font-semibold"
-        >
-          Add Product
-        </button>
+      <div className="w-64 bg-gray-800 text-white sticky top-50 rounded-r-2xl h-[60vh] z-10 lg:!block hidden">
+        <div className="p-6">
+          <h2 className="text-2xl font-bold mb-6">Admin Panel</h2>
+          <nav>
+            <ul>
+              <li className="mb-4">
+                <NavLink
+                  to="/adminDashboard"
+                  className={({ isActive }) =>
+                    `block py-2 px-4 rounded ${isActive ? "bg-gray-800" : "hover:bg-gray-700"}`
+                  }
+                >
+                  Overview
+                </NavLink>
+              </li>
+              <li className="mb-4">
+                <NavLink
+                  to="/adminDashboard/users"
+                  className={({ isActive }) =>
+                    `block py-2 px-4 rounded ${isActive ? "bg-gray-600" : "hover:bg-gray-700"}`
+                  }
+                >
+                  Users
+                </NavLink>
+              </li>
+              <li className="mb-4">
+                <NavLink
+                  to="/adminDashboard/products"
+                  className={({ isActive }) =>
+                    `block py-2 px-4 rounded ${isActive ? "bg-gray-600" : "hover:bg-gray-700"}`
+                  }
+                >
+                  Products
+                </NavLink>
+              </li>
+              <li className="mb-4">
+                <NavLink
+                  to="/adminDashboard/orders"
+                  className={({ isActive }) =>
+                    `block py-2 px-4 rounded ${isActive ? "bg-gray-600" : "hover:bg-gray-700"}`
+                  }
+                >
+                  Orders
+                </NavLink>
+              </li>
+            </ul>
+          </nav>
+        </div>
       </div>
 
-      {products.length > 0 ? (
-        <div data-aos="fade-down" className="overflow-x-auto mb-12">
-          <table className="lg:!w-[70vw] mx-auto bg-white shadow-md rounded-lg overflow-hidden table-fixed">
-            <thead className="bg-gray-200">
-              <tr>
-                <th className="w-2/6 py-3 px-4 text-left text-sm font-semibold text-gray-700">Name</th>
-                <th className="w-1/6 py-3 px-4 text-left text-sm font-semibold text-gray-700">Price</th>
-                <th className="w-1/6 py-3 px-4 text-left text-sm font-semibold text-gray-700">Quantity</th>
-                <th className="w-1/6 py-3 px-4 text-left text-sm font-semibold text-gray-700">In Stock</th>
-                <th className="w-1/6 py-3 px-4 text-left text-sm font-semibold text-gray-700">Update</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((product) => (
-                <tr key={product._id} className="border-b hover:bg-gray-50">
-                  <td className="w-2/6 py-3 px-4 text-sm text-gray-600 truncate">{product.name}</td>
-                  <td className="w-1/6 py-3 px-4 text-sm text-gray-600">${product.price.toFixed(2)}</td>
-                  <td className="w-1/6 py-3 px-4 text-sm text-gray-600">{product.quantity}</td>
-                  <td className="w-1/6 py-3 px-4 text-sm text-gray-600">
-                    {product.quantity > 0 ? "Yes" : "No"}
-                  </td>
-                  <td className="w-1/6 py-3 px-4 text-sm text-gray-600">
-                    <button
-                      onClick={() => openUpdateModal(product)}
-                      className="py-1 px-3 rounded-sm text-white font-semibold bg-blue-500 hover:bg-blue-600 whitespace-nowrap"
-                    >
-                      Update
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <p className="text-center text-gray-500 mt-4 mb-12">No products found.</p>
-      )}
-
-      {/* Orders Section */}
-      <div className="mb-6">
-        <h2 className="text-3xl font-bold text-gray-800 text-center">Orders</h2>
-        <p className="text-center text-gray-300">You can go to All Products to add products and create an order</p>
+      <div className="flex-1 p-6">
+        <h1 className="text-3xl font-bold text-gray-400 mb-6 text-center">Admin Dashboard</h1>
+        <Outlet
+          context={{
+            handleToggleStatus,
+            isToggling,
+            openUpdateModal,
+            closeUpdateModal,
+            openAddModal,
+            closeAddModal,
+            openUpdateOrderModal,
+            closeUpdateOrderModal,
+          }}
+        />
       </div>
 
-      {orderData?.data && orderData.data.length > 0 ? (
-        <div data-aos="fade-down" className="overflow-x-auto mb-12">
-          <table className="lg:!w-[70vw] mx-auto bg-white shadow-md rounded-lg overflow-hidden table-fixed">
-            <thead className="bg-gray-200">
-              <tr>
-                <th className="w-2/6 py-3 px-4 text-left text-sm font-semibold text-gray-700">User Email</th>
-                <th className="w-1/6 py-3 px-4 text-left text-sm font-semibold text-gray-700">Total Price</th>
-                <th className="w-1/6 py-3 px-4 text-left text-sm font-semibold text-gray-700">Status</th>
-                <th className="w-1/6 py-3 px-4 text-left text-sm font-semibold text-gray-700">Contact</th>
-                <th className="w-1/6 py-3 px-4 text-left text-sm font-semibold text-gray-700">Update</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orderData.data.map((order) => (
-                <tr key={order._id} className="border-b hover:bg-gray-50">
-                  <td className="w-2/6 py-3 px-4 text-sm text-gray-600 truncate">{order.userEmail}</td>
-                  <td className="w-1/6 py-3 px-4 text-sm text-gray-600">${order.totalPrice.toFixed(2)}</td>
-                  <td className="w-1/6 py-3 px-4 text-sm text-gray-600">{order.status}</td>
-                  <td className="w-1/6 py-3 px-4 text-sm text-gray-600 truncate">{order.contactNumber}</td>
-                  <td className="w-1/6 py-3 px-4 text-sm text-gray-600">
-                    <button
-                      onClick={() => openUpdateOrderModal(order)}
-                      className="py-1 px-3 rounded-sm text-white font-semibold bg-blue-500 hover:bg-blue-600 whitespace-nowrap"
-                    >
-                      Update
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <p className="text-center text-gray-500 mt-4 mb-12">No orders found.</p>
-      )}
-
-      {/* Modals */}
       {selectedProduct && <UpdateProductModal product={selectedProduct} onClose={closeUpdateModal} />}
       {isAddModalOpen && <AddProductModal onClose={closeAddModal} />}
       {selectedOrder && <UpdateOrderModal order={selectedOrder} onClose={closeUpdateOrderModal} />}

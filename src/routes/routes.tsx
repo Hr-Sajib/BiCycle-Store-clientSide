@@ -12,6 +12,10 @@ import ProductDetails from "@/redux/features/products/ProductDetails";
 import PaymentSuccess from "@/pages/checkOut/PaymentSuccess";
 import PaymentFailed from "@/pages/checkOut/PaymentFailed";
 import About from "@/pages/About";
+import Overview from "@/pages/dashboard/Overview"; // New component
+import Users from "@/pages/dashboard/Users"; // New component
+import Products from "@/pages/dashboard/Products"; // New component
+import Orders from "@/pages/dashboard/Orders"; // New component
 
 const router = createBrowserRouter([
   {
@@ -69,6 +73,24 @@ const router = createBrowserRouter([
             <AdminDashboard />
           </ProtectedRoute>
         ),
+        children: [
+          {
+            index: true,
+            element: <Overview />,
+          },
+          {
+            path: "users",
+            element: <Users />,
+          },
+          {
+            path: "products",
+            element: <Products />,
+          },
+          {
+            path: "orders",
+            element: <Orders />,
+          },
+        ],
       },
       {
         path: "allProducts",
@@ -76,10 +98,10 @@ const router = createBrowserRouter([
       },
       {
         path: "about",
-        element: <About/>,
+        element: <About />,
       },
       {
-        path: "allProducts/productDetails/:productId", // Dynamic route with productId
+        path: "allProducts/productDetails/:productId",
         element: <ProductDetails />,
       },
     ],

@@ -25,7 +25,7 @@ const orderApi = baseApi.injectEndpoints({
     // Create a new order (POST /orders/)
     createOrder: builder.mutation<OrderResponse, { userEmail: string; products: TProducts; totalPrice: number; address: string; contactNumber: string }>({
       query: (orderData) => ({
-        url: "/orders",
+        url: "/api/orders",
         method: "POST",
         body: orderData,
       }),
@@ -34,7 +34,7 @@ const orderApi = baseApi.injectEndpoints({
     // Get all orders (GET /orders/)
     getAllOrders: builder.query<OrdersResponse, void>({
       query: () => ({
-        url: "/orders",
+        url: "/api/orders",
         method: "GET",
       }),
     }),
@@ -42,7 +42,7 @@ const orderApi = baseApi.injectEndpoints({
     // Get a single order by ID (GET /orders/:orderId)
     getSingleOrder: builder.query<OrderResponse, string>({
       query: (orderId) => ({
-        url: `/orders/${orderId}`,
+        url: `/api/orders/${orderId}`,
         method: "GET",
       }),
     }),
@@ -50,7 +50,7 @@ const orderApi = baseApi.injectEndpoints({
     // Update an order by ID (PATCH /orders/:orderId)
     updateOrder: builder.mutation<OrderResponse, { orderId: string; data: Partial<TOrder> }>({
       query: ({ orderId, data }) => ({
-        url: `/orders/${orderId}`,
+        url: `/api/orders/${orderId}`,
         method: "PATCH",
         body: data,
       }),
@@ -59,7 +59,7 @@ const orderApi = baseApi.injectEndpoints({
     // Delete an order by ID (DELETE /orders/:orderId)
     deleteOrder: builder.mutation<DeleteResponse, string>({
       query: (orderId) => ({
-        url: `/orders/${orderId}`,
+        url: `/api/orders/${orderId}`,
         method: "DELETE",
       }),
     }),
