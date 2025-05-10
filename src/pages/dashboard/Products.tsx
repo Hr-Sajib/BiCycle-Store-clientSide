@@ -15,9 +15,9 @@ const Products = () => {
     openUpdateOrderModal: (order: any) => void;
     closeUpdateOrderModal: () => void;
   }>();
-
+// data-aos="fade-down"
   return (
-    <div data-aos="fade-down" className="lg:!w-full w-[90vw]">
+    <div  className="">
       <div className="flex justify-center gap-5 items-center mb-6">
         <h2 className="text-3xl font-bold text-gray-800 text-center">Products</h2>
         <button
@@ -28,8 +28,8 @@ const Products = () => {
         </button>
       </div>
       {products.length > 0 ? (
-        <div className="overflow-x-auto mb-12">
-          <table className="lg:!w-[70vw] mx-auto bg-white shadow-md rounded-lg overflow-hidden table-fixed">
+        <div className="overflow-x-auto mb-12 lg:!w-full w-[90vw]">
+          <table className="lg:!w-full  w-[90vw] mx-auto bg-white shadow-md rounded-lg overflow-hidden table-fixed">
             <thead className="bg-gray-200">
               <tr>
                 <th className="w-2/6 py-3 px-4 text-left text-sm font-semibold text-gray-700">Name</th>

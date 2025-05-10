@@ -1,4 +1,3 @@
-
 import { useSelector } from "react-redux";
 import { selectAllUsers } from "@/redux/features/user/allUserSlice";
 import { selectProducts, TProduct } from "@/redux/features/products/productSlice";
@@ -11,16 +10,9 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend,
 
 const Overview = () => {
   const users = useSelector(selectAllUsers);
+  console.log("users: ", users);
   const products = useSelector(selectProducts);
   const orders = useSelector(selectOrders);
-  // const { } = useOutletContext<{
-  //   openUpdateModal: (product: any) => void;
-  //   closeUpdateModal: () => void;
-  //   openAddModal: () => void;
-  //   closeAddModal: () => void;
-  //   openUpdateOrderModal: (order: any) => void;
-  //   closeUpdateOrderModal: () => void;
-  // }>();
 
   // Prepare data for User Status Bar Chart
   const userStatusCounts = users.reduce(
@@ -28,15 +20,15 @@ const Overview = () => {
       acc[user.status] = (acc[user.status] || 0) + 1;
       return acc;
     },
-    { active: 0, disabled: 0 }
+    { active: 0, deactivated: 0 } // Corrected typo: "diactivated" to "deactivated"
   );
 
   const userStatusData = {
-    labels: ["Active", "Inactive"],
+    labels: ["Active", "Deactivated"], // Corrected label: "Diactivated" to "Deactivated"
     datasets: [
       {
         label: "Number of Users",
-        data: [userStatusCounts.active, userStatusCounts.inactive],
+        data: [userStatusCounts.active, userStatusCounts.deactivated], // Corrected key: "diactivated" to "deactivated"
         backgroundColor: ["#4CAF50", "#F44336"],
         borderColor: ["#388E3C", "#D32F2F"],
         borderWidth: 1,

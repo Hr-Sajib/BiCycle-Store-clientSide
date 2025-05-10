@@ -7,90 +7,104 @@ import { selectCurrentUser } from "@/redux/features/auth/authSlice";
 import { useGetUserQuery, useUpdateUserMutation, useUpdatePasswordMutation } from "@/redux/features/user/userApi";
 import { setUser } from "@/redux/features/user/userSlice";
 import { toast } from "sonner";
+import { NavLink, Outlet } from "react-router-dom";
+import { FaBars, FaTimes } from "react-icons/fa";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const UserDashboard = () => {
-
-
-  const authUser = useSelector(selectCurrentUser); // From auth slice
-  const user = useSelector(selectUser); // From user slice
+  const authUser = useSelector(selectCurrentUser);
+  const user = useSelector(selectUser);
   const loading = useSelector(selectUserLoading);
   const error = useSelector(selectUserError);
   const dispatch = useDispatch();
-  // console.log("Usr: ",authUser)
 
-
-  // Use query hook to fetch user data
   const { data, isLoading, isError, error: queryError } = useGetUserQuery();
+  const [updateUser, { isLoading: isUpdating, isError: isUpdateError, error: updateError }] = useUpdateUserMutation();
+  const [updatePassword, { isLoading: isPasswordUpdating, isError: isPasswordError, error: passwordError }] = useUpdatePasswordMutation();
 
-  // Use mutation hook to update user data
-  const [updateUser, { isLoading: isUpdating, isError: isUpdateError, error: updateError }] =
-    useUpdateUserMutation();
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+    AOS.init({
+      duration: 600,
+      once: true,
+      offset: 20,
+    });
+  }, []);
 
-  // Use mutation hook to update password
-  const [updatePassword, { isLoading: isPasswordUpdating, isError: isPasswordError, error: passwordError }] =
-    useUpdatePasswordMutation();
-
-  // Sync API data with Redux store and initialize form fields
   useEffect(() => {
     if (data?.data) {
-      dispatch(setUser(data.data)); // Store fetched user in Redux
-      setName(data.data.name); // Initialize name
-      setEmail(data.data.email); // Initialize email
+      dispatch(setUser(data.data));
+      setName(data.data.name);
+      setEmail(data.data.email);
     }
   }, [data, dispatch]);
 
-  // State for editable fields
   const [name, setName] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
-
-  // State for password change form
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
-  // Handle update button click
   const handleUpdate = async () => {
     try {
       const updatedData = { name, email };
-      const result = await updateUser(updatedData).unwrap(); // Send update request
-      dispatch(setUser(result.data)); // Update Redux store with response
+      const result = await updateUser(updatedData).unwrap();
+      dispatch(setUser(result.data));
       console.log("User updated successfully:", result.data);
-      toast('✅ Updated successfully..');
+      toast("✅ Updated successfully..");
     } catch (err) {
       console.error("Failed to update user:", err);
-      toast('❌ Update error!');
+      toast("❌ Update error!");
     }
   };
 
-  // Handle password change button click
   const handleChangePassword = async () => {
     try {
       const passwordData = { oldPassword, newPassword };
-      const result = await updatePassword(passwordData).unwrap(); // Send password update request
+      const result = await updatePassword(passwordData).unwrap();
       console.log("Password updated successfully:", result.message);
-      toast('✅ Update successfull..');
-
-      setOldPassword(""); // Clear form on success
+      toast("✅ Update successful..");
+      setOldPassword("");
       setNewPassword("");
     } catch (err) {
       console.error("Failed to update password:", err);
-      toast('❌ Update error');
-
+      toast("❌ Update error");
     }
   };
 
   if (isLoading || loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="min-h-screen flex relative">
+        {/* Skeleton Sidebar */}
+        <div className="w-64 bg-gray-200 animate-pulse sticky top-42 rounded-r-2xl h-[60vh] z-10 lg:!block hidden"></div>
+
+        {/* Skeleton Main Content */}
+        <div className="flex-1 p-6 mt-42 lg:ml-0">
+          <div className="w-3/4 mx-auto">
+            <div className="h-10 bg-gray-200 animate-pulse rounded mb-6"></div>
+            <div className="space-y-4">
+              <div className="h-10 bg-gray-200 animate-pulse rounded"></div>
+              <div className="h-10 bg-gray-200 animate-pulse rounded"></div>
+              <div className="h-10 bg-gray-200 animate-pulse rounded"></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Skeleton Hamburger Button for Mobile */}
+        <button className="lg:!hidden fixed top-28 left-4 z-50 p-2 bg-gray-200 animate-pulse rounded-md"></button>
+      </div>
+    );
   }
 
   if (isError || error) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-red-500">
-          Error: {(queryError as any)?.data?.message || error}
-        </p>
+        <p className="text-red-500">{(queryError as any)?.data?.message || error}</p>
       </div>
     );
   }
+
   if (!authUser) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -99,127 +113,107 @@ const UserDashboard = () => {
     );
   }
 
-  const displayUser = user || data?.data; // Use Redux state or API data
-
   return (
-    <div className="min-h-screen mt-10 flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-          User Profile
-        </h2>
-        {displayUser ? (
-          <>
-            {/* User Info Form */}
-            <div className="space-y-6">
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <p className="text-sm text-red-200">
-                  *Remember you have to log in with new email after changing email
-                </p>
-              </div>
-              <div className="flex justify-end">
-                <button
-                  onClick={handleUpdate}
-                  disabled={isUpdating}
-                  className={`bg-black text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    isUpdating ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
-                >
-                  {isUpdating ? "Updating..." : "Update"}
-                </button>
-              </div>
-              {isUpdateError && (
-                <p className="text-red-500 text-sm">
-                  Error: {(updateError as any)?.data?.message || "Failed to update"}
-                </p>
-              )}
-            </div>
+    <div className="min-h-screen flex relative">
+      {/* Hamburger Button for Mobile */}
+      <button
+        onClick={() => setIsSidebarOpen(true)}
+        className="lg:!hidden fixed top-28 left-4 z-50 p-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+        title="Open Sidebar"
+      >
+        <FaBars />
+      </button>
 
-            {/* Password Change Form */}
-            <div className="mt-8 border-t pt-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                Change Password
-              </h3>
-              <div className="space-y-6">
-                <div>
-                  <label
-                    htmlFor="oldPassword"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Old Password
-                  </label>
-                  <input
-                    type="password"
-                    id="oldPassword"
-                    value={oldPassword}
-                    onChange={(e) => setOldPassword(e.target.value)}
-                    className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="newPassword"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    New Password
-                  </label>
-                  <input
-                    type="password"
-                    id="newPassword"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="flex justify-end">
-                  <button
-                    onClick={handleChangePassword}
-                    disabled={isPasswordUpdating}
-                    className={`bg-black text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      isPasswordUpdating ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
-                  >
-                    {isPasswordUpdating ? "Changing..." : "Change Password"}
-                  </button>
-                </div>
-                {isPasswordError && (
-                  <p className="text-red-500 text-sm">
-                    Error: {(passwordError as any)?.data?.message || "Failed to change password"}
-                  </p>
-                )}
-              </div>
+      {/* Mobile Sidebar (Visible when toggled) */}
+      {isSidebarOpen && (
+        <div data-aos="fade-right" className="fixed inset-0 z-50 lg:!hidden">
+          <div className="fixed top-0 left-0 w-64 h-full bg-gray-800 text-white p-6 shadow-lg transform transition-transform duration-300 ease-in-out">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold">User Panel</h2>
+              <button
+                onClick={() => setIsSidebarOpen(false)}
+                className="text-gray-300 hover:text-white"
+                title="Close Sidebar"
+              >
+                <FaTimes size={24} />
+              </button>
             </div>
-          </>
-        ) : (
-          <p className="text-center text-gray-500">No user data available.</p>
-        )}
+            <nav>
+              <ul>
+                <li className="mb-4">
+                  <NavLink
+                    to="/userDashboard/"
+                    onClick={() => {
+                      setIsSidebarOpen(false);
+                    }}
+                    className={({ isActive }) =>
+                      `block py-2 px-4 rounded ${isActive ? "bg-gray-600" : "hover:bg-gray-700"}`
+                    }
+                  >
+                    Profile
+                  </NavLink>
+                </li>
+                <li className="mb-4">
+                  <NavLink
+                    to="/userDashboard/myOrders"
+                    onClick={() => {
+                      setIsSidebarOpen(false);
+                    }}
+                    className={({ isActive }) =>
+                      `block py-2 px-4 rounded ${isActive ? "bg-gray-600" : "hover:bg-gray-700"}`
+                    }
+                  >
+                    My Orders
+                  </NavLink>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      )}
+
+      {/* Desktop Sidebar (Always visible on lg screens) */}
+      <div className="w-64 bg-gray-800 text-white sticky top-42 rounded-r-2xl h-[60vh] z-10 lg:!block hidden">
+        <div className="p-6">
+          <h2 className="text-2xl font-bold mb-6">User Panel</h2>
+          <nav>
+            <ul>
+              <li className="mb-4">
+                <NavLink
+                  to="/userDashboard/"
+                  className={({ isActive }) =>
+                    `block py-2 px-4 rounded ${isActive ? "bg-gray-600" : "hover:bg-gray-700"}`
+                  }
+                >
+                  Profile
+                </NavLink>
+              </li>
+              <li className="mb-4">
+                <NavLink
+                  to="/userDashboard/myOrders"
+                  className={({ isActive }) =>
+                    `block py-2 px-4 rounded ${isActive ? "bg-gray-600" : "hover:bg-gray-700"}`
+                  }
+                >
+                  My Orders
+                </NavLink>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 p-6 lg:ml-0">
+        <h1 className="text-3xl font-bold text-gray-400 mb-6 text-center">User Dashboard</h1>
+        <Outlet context={{ 
+          name, setName, email, setEmail, 
+          oldPassword, setOldPassword, newPassword, setNewPassword, 
+          handleUpdate, handleChangePassword, 
+          isUpdating, isPasswordUpdating, 
+          isUpdateError, isPasswordError, 
+          updateError, passwordError 
+        }} />
       </div>
     </div>
   );

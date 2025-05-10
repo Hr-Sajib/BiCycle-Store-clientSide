@@ -16,6 +16,8 @@ import Overview from "@/pages/dashboard/Overview"; // New component
 import Users from "@/pages/dashboard/Users"; // New component
 import Products from "@/pages/dashboard/Products"; // New component
 import Orders from "@/pages/dashboard/Orders"; // New component
+import MyOrders from "@/pages/dashboard/myOrders";
+import ProfileInfo from "@/pages/dashboard/ProfileInfo";
 
 const router = createBrowserRouter([
   {
@@ -65,6 +67,16 @@ const router = createBrowserRouter([
             <UserDashboard />
           </ProtectedRoute>
         ),
+        children: [
+          {
+            index: true,
+            element: <ProfileInfo />,
+          },
+          {
+            path: "myOrders",
+            element: <MyOrders />,
+          }
+        ],
       },
       {
         path: "adminDashboard",

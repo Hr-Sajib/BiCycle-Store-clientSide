@@ -19,11 +19,10 @@ const Orders = () => {
     <div data-aos="fade-down" className="lg:!w-full w-[90vw]">
       <div className="mb-6">
         <h2 className="text-3xl font-bold text-gray-800 text-center">Orders</h2>
-        <p className="text-center text-gray-300">You can go to All Products to add products and create an order</p>
       </div>
       {orders.length > 0 ? (
         <div className="overflow-x-auto mb-12">
-          <table className="lg:!w-[70vw] mx-auto bg-white shadow-md rounded-lg overflow-hidden table-fixed">
+          <table className="lg:!w-full w-[90vw] mx-auto bg-white shadow-md rounded-lg overflow-hidden table-fixed">
             <thead className="bg-gray-200">
               <tr>
                 <th className="w-2/6 py-3 px-4 text-left text-sm font-semibold text-gray-700">User Email</th>

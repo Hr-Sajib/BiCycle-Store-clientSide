@@ -119,7 +119,7 @@ const AdminDashboard = () => {
         <div data-aos="fade-right" className="fixed inset-0 z-50 lg:!hidden">
           <div className="fixed top-0 left-0 w-64 h-full bg-gray-800 text-white p-6 shadow-lg transform transition-transform duration-300 ease-in-out">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">Admin Panel</h2>
+              <h2 className="text-2xl font-bold">Admin Options</h2>
               <button
                 onClick={() => setIsSidebarOpen(false)}
                 className="text-gray-300 hover:text-white"
@@ -180,9 +180,9 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      <div className="w-64 bg-gray-800 text-white sticky top-50 rounded-r-2xl h-[60vh] z-10 lg:!block hidden">
+      <div className="w-64 bg-gray-800 text-white sticky top-58 rounded-r-2xl h-[60vh] z-10 lg:!block hidden">
         <div className="p-6">
-          <h2 className="text-2xl font-bold mb-6">Admin Panel</h2>
+          <h2 className="text-2xl font-bold mb-6">Admin Options</h2>
           <nav>
             <ul>
               <li className="mb-4">
