@@ -1,55 +1,140 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+* * * * *
 
-Currently, two official plugins are available:
+📍 🚴‍♂️ Bicycle Garden Store -- Frontend
+-------------------
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Welcome to the **Bicycle Store**! This is a feature-rich, user-friendly frontend for an e-commerce web application that allows users to browse, filter, and purchase bicycles. Built with scalability, performance, and user experience in mind.
 
-## Expanding the ESLint configuration
+✅ Live Site: <https://bicycle-store-client-one.vercel.app>\
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+🧑‍💻 Admin Credentials:\
+`Email:` admin@bicycle.com\
+`Password:` admin@bicycle
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+* * * * *
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+🧰 Technologies Used
+--------------------
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+-   ⚛️ **React.js** (with Vite)
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
-# BiCycle-Store-clientSide
+-   💅 **Tailwind CSS** (for sleek, responsive design)
+
+-   🔐 **JWT Authentication**
+
+-   ⚙️ **Redux Toolkit + RTK Query**
+
+-   📦 **TypeScript**
+
+-   🌐 **React Router DOM**
+
+-   💬 **React Toastify** (for notifications)
+
+* * * * *
+
+🔑 Core Features
+----------------
+
+### 👤 **User Authentication**
+
+-   🔐 Secure **Login & Registration**
+
+-   🧾 JWT-based session handling
+
+-   🔄 Role-based access (User/Admin)
+
+-   🚪 Logout functionality
+
+### 🗺️ **Routing (Public Pages)**
+
+-   🏠 **Home Page** -- Highlighted bicycles, banner, and testimonials
+
+-   🚲 **All Bicycles Page** -- Advanced filtering, searching, and sorting
+
+-   🔍 **Bicycle Details Page** -- Detailed view with a Buy Now option
+
+-   ℹ️ **About Us Page** -- Know the mission behind the platform
+
+### 🔒 **Routing (Private Pages)**
+
+-   💳 **Checkout Page** -- Place orders with real-time stock check and payment
+
+-   📊 **Dashboard** (Role-Based)
+
+    -   **User Dashboard** -- Order history, profile update
+
+    -   **Admin Dashboard** -- Product & order management, user control
+
+* * * * *
+
+🎨 UI/UX Highlights
+-------------------
+
+-   📱 Fully **responsive** and optimized for all screen sizes
+
+-   ⚡ Smooth navigation and intuitive design
+
+-   🔄 **Loading indicators** on data fetch and submissions
+
+-   🔔 **Toasts** for user actions: success & error messages
+
+-   🛑 Graceful **error handling** for all edge cases
+
+
+📡 API Integration
+------------------
+
+-   All data (bicycles, users, orders) is fetched from a custom RESTful API
+
+-   🔄 Powered by **RTK Query** for efficient state & cache management
+
+* * * * *
+
+🚀 Getting Started (Local Setup)
+--------------------------------
+
+### 🛠️ Prerequisites
+
+Make sure you have the following installed:
+
+-   Node.js (v18 or later)
+
+-   Git
+
+### 📥 Installation
+
+1.  Clone the repo:
+
+    bash
+
+    CopyEdit
+
+    `git clone https://github.com/Hr-Sajib/BiCycle-Store-clientSide`
+
+2.  Install dependencies:
+
+
+
+    `npm install`
+
+
+4.  Run the app:
+
+
+
+    `npm run dev`
+
+✅ Visit `http://localhost:5173` to see it in action.
+
+* * * * *
+
+📬 Contact & Support
+--------------------
+
+📧 Email: hrsajib001@gmail.com\
+💬 For any questions, feel free to reach out or create an issue in the repo.
+
+* * * * *
+
+🔥 Good luck and happy coding!
