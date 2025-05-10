@@ -8,6 +8,7 @@ import DiscountCouponSection from "./DiscountCouponSection";
 import ContactUs from "./ContactUs";
 import Branding from "./Branding";
 import AboutUs from "./AboutUs";
+import UpcomingEvents from "./UpcomingEvents";
 
 const Home = () => {
 
@@ -42,6 +43,7 @@ const Home = () => {
             <FeaturedProducts/>
             <Branding/>
             <DiscountCouponSection/>
+            <UpcomingEvents/>
             <AboutUs/>
             <ContactUs/>
             <Review/>

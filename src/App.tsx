@@ -16,11 +16,15 @@ function App() {
       <Navbar/> {/* Added class for styling */}
       <div className="min-h-[60vh]">
         <Link to="checkOut">
-          <div className="fixed top-[90vh] lg:left-[92vw] left-[85vw] bg-blue-500 text-white p-3 rounded-sm z-20">
-            <p className="bg-white text-black font-bold flex justify-center rounded-full">
-              {cartItemCount} {/* Dynamic count */}
-            </p>
-            <p>Cart</p>
+          <div className="border flex gap-4 items-center fixed top-[90vh] lg:left-[92vw] left-[85vw] bg-black text-white p-3 rounded-sm z-20">
+            <div>
+              <p className="bg-white text-black font-bold flex justify-center rounded-full">
+                {cartItemCount} {/* Dynamic count */}
+              </p>
+              <p>Cart</p>
+            </div>
+            <img className="h-8" src="https://i.postimg.cc/LXY9gqHZ/cycle.png" alt="" />
+
           </div>
         </Link>
         <Outlet />
