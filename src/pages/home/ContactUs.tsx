@@ -3,6 +3,9 @@
 import { useState, useRef } from "react";
 import { RiSendPlaneFill } from "react-icons/ri";
 import emailjs from "emailjs-com";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { useEffect } from "react";
 
 const ContactUs = () => {
   const form = useRef<HTMLFormElement | null>(null);
@@ -16,6 +19,8 @@ const ContactUs = () => {
       setButtonText("Send Message");
       return;
     }
+
+
 
     const formData = new FormData(form.current);
     const userEmail = formData.get("email") as string;
@@ -46,8 +51,16 @@ const ContactUs = () => {
       );
   };
 
+  useEffect(() => {
+    AOS.init({
+      duration: 600,
+      once: true,
+      offset: 20,
+    });
+  }, []);
+
   return (
-    <div
+    <div data-aos="fade-down"
       className="mx-[8vw] py-16 relative bg-fixed bg-cover bg-center bg-no-repeat lg:mb-30"
     >
       <div className="flex justify-center items-center px-4 ">

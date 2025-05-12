@@ -3,8 +3,20 @@
 import { useState, useRef, useEffect } from "react";
 import { FiCopy, FiX } from "react-icons/fi";
 import { toast } from "sonner";
+import "aos/dist/aos.css";
+import Aos from "aos";
+
 
 const DiscountCouponSection = () => {
+
+    useEffect(() => {
+        Aos.init({
+          duration: 600,
+          once: true,
+          offset: 20,
+        });
+      }, []);
+
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [buttonText, setButtonText] = useState("Collect Coupon");
@@ -71,7 +83,7 @@ const DiscountCouponSection = () => {
   }, [isModalOpen]);
 
   return (
-    <div className="bg-background py-10 px-4">
+    <div data-aos="zoom-in" className="bg-background py-10 px-4">
       <div
         className="max-w-[80vw] mx-auto bg-cover bg-center rounded-lg bg-accent p-8 relative lg:mt-20 lg:mb-30"
         style={{

@@ -9,9 +9,9 @@ const Hero = () => {
   ];
 
   const taglines = [
-    "Ride Without Limits",
-    "Find Your Perfect Bike",
-    "Pedal Your Passion",
+    "Ride Without Limits ",
+    "Find Your Perfect Bike ",
+    "Pedal Your Passion ",
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);

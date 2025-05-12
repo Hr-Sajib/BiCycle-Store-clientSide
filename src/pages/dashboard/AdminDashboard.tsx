@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import {  setAllUsers, deactivateUser } from "@/redux/features/user/allUserSlice";
+import { setAllUsers, deactivateUser } from "@/redux/features/user/allUserSlice";
 import { useGetAllUsersQuery, useToggleUserStatusMutation } from "@/redux/features/user/allUserApi";
-import {  setProducts, TProduct } from "@/redux/features/products/productSlice";
+import { setProducts, TProduct } from "@/redux/features/products/productSlice";
 import { useGetAllOrdersQuery } from "@/redux/features/order/orderApi";
 import { setOrders, TOrder } from "@/redux/features/order/orderSlice";
 import { useGetAllProductsQuery } from "@/redux/features/products/productsApi";
@@ -83,12 +83,49 @@ const AdminDashboard = () => {
   const openUpdateOrderModal = (order: TOrder) => setSelectedOrder(order);
   const closeUpdateOrderModal = () => setSelectedOrder(null);
 
-  if (isUsersLoading || isProductsLoading || isOrdersLoading) {
-    return (
-      <div className="min-h-screen flex items-center mt-[30vh] justify-center">
-        <p className="text-gray-500">Loading...</p>
+  // Skeleton Loading Component
+  const SkeletonLoader = () => (
+    <div className="min-h-screen flex">
+      {/* Sidebar Skeleton (Desktop) */}
+      <div className="w-64 bg-gray-800 sticky top-54 mb-2 rounded-r-2xl h-[60vh] z-10 hidden lg:block">
+        <div className="p-6">
+          <div className="h-8 bg-gray-700 rounded w-3/4 mb-6 animate-pulse"></div>
+          <nav>
+            <ul>
+              {[...Array(4)].map((_, index) => (
+                <li key={index} className="mb-4">
+                  <div className="h-6 bg-gray-700 rounded w-full animate-pulse"></div>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
       </div>
-    );
+
+      {/* Main Content Skeleton */}
+      <div className="flex-1 p-6">
+        <div className="h-8 bg-gray-300 rounded w-1/3 mx-auto mb-6 animate-pulse"></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+          {[...Array(4)].map((_, index) => (
+            <div key={index} className="bg-gray-300 p-6 rounded-lg shadow animate-pulse">
+              <div className="h-6 bg-gray-400 rounded w-3/4 mb-2"></div>
+              <div className="h-8 bg-gray-400 rounded w-1/2"></div>
+            </div>
+          ))}
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow">
+          <div className="h-6 bg-gray-300 rounded w-1/4 mb-4 animate-pulse"></div>
+          <div className="flex justify-between space-x-4">
+            <div className="w-1/2 h-32 bg-gray-300 rounded animate-pulse"></div>
+            <div className="w-1/2 h-32 bg-gray-300 rounded animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (isUsersLoading || isProductsLoading || isOrdersLoading) {
+    return <SkeletonLoader />;
   }
 
   if (userError || productError || orderError) {

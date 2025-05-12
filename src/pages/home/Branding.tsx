@@ -1,6 +1,19 @@
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { useEffect } from "react";
+
 const Branding = () => {
+
+  useEffect(() => {
+      AOS.init({
+        duration: 600,
+        once: true,
+        offset: 20,
+      });
+    }, []);
+ 
     return (
-      <section className=" bg-fixed w-full lg:h-80 h-[30vh] bg-no-repeat bg-center bg-cover px-4 text-center shadow-md my-20 relative">
+      <section data-aos="fade-down" className=" bg-fixed w-full lg:h-80 h-[30vh] bg-no-repeat bg-center bg-cover px-4 text-center shadow-md my-20 relative">
         <div className="bg-black w-full h-full absolute left-0"></div>
         <div className="container mx-auto">
           <div className="relative top-2 md:top-20">

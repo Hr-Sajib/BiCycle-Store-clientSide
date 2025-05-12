@@ -1,7 +1,19 @@
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { useEffect } from "react";
 
 const AboutUs = () => {
+
+    useEffect(() => {
+        AOS.init({
+          duration: 600,
+          once: true,
+          offset: 20,
+        });
+      }, []);
+
   return (
-    <section className="mx-[9vw] mb-20 relative bg-fixed bg-cover bg-center bg-no-repeat bg-[url('https://i.postimg.cc/zG7d0KG1/about-cycle.jpg')]">
+    <section data-aos="fade-up" className="mx-[9vw] mb-20 relative bg-fixed bg-cover bg-center bg-no-repeat bg-[url('https://i.postimg.cc/zG7d0KG1/about-cycle.jpg')]">
       <div className="bg-black opacity-70 w-full h-full absolute left-0"></div>
       <div className="container mx-auto px-4 relative z-10 py-10">
         {/* Text vs Image Container */}

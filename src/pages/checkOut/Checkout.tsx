@@ -114,13 +114,13 @@ const Checkout = () => {
   };
 
   return (
-    <div className="py-8 px-4 max-w-7xl ml-[4vw] mt-[10vh]">
-      {cart.length === 0 ? (
+<div className="border border-black" >
+    <div className="py-8 px-4 max-w-7xl ml-[4vw] mt-[10vh]" >      {cart.length === 0 ? (
         <p className="text-center text-gray-500">Your cart is empty.</p>
       ) : (
         <>
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm">
+          <div className="overflow-x-auto rounded-2xl border-2">
+            <table className="min-w-full bg-white border-gray-200 rounded-2xl shadow-sm">
               <thead>
                 <tr className="bg-gray-100 border-b">
                   <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Image</th>
@@ -230,6 +230,7 @@ const Checkout = () => {
         </>
       )}
     </div>
+</div>
   );
 };
 
