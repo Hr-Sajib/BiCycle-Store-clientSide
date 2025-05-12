@@ -195,7 +195,7 @@ const AllProducts = () => {
         <>
           {/* Sticky Left Sidebar for Large Screens */}
           <div
-            className="hidden rounded-lg mt-16 lg:!block lg:!w-80 lg:!h-[50vh] lg:!sticky lg:!top-24 lg:!bg-white lg:!p-6 lg:!shadow-lg lg:!mr-0"
+            className="hidden border rounded-lg mt-16 lg:!block lg:!w-80 lg:!h-[50vh] lg:!sticky lg:!top-58 lg:!bg-white lg:!p-6 lg:!shadow-lg lg:!mr-0"
           >
             <h3 className="text-xl font-semibold text-gray-800 mb-6">Filters</h3>
             <div className="space-y-4">
@@ -275,7 +275,7 @@ const AllProducts = () => {
                 />
                 <button
                   onClick={handleSearch}
-                  className="p-2 bg-blue-600 text-white h-10 rounded-md hover:bg-blue-700 flex items-center justify-center"
+                  className="p-2 bg-gray-700 text-white h-10 rounded-md hover:bg-gray-900 flex items-center justify-center"
                   title="Search"
                 >
                   {isSearching ? (
@@ -290,7 +290,7 @@ const AllProducts = () => {
             {/* Mobile Filter Button */}
             <button
               onClick={() => setIsFilterOpen(true)}
-              className="md:!hidden h-11 gap-2 z-40 p-2 bg-blue-600 fixed right-0 text-white rounded-l-md hover:bg-blue-700 flex items-center justify-center"
+              className="md:!hidden h-11 gap-2 z-40 p-2 bg-blue-800 fixed right-0 top-24 text-white rounded-l-md hover:bg-blue-700 flex items-center justify-center"
               title="Filter"
             >
               <FaFilter size={15} />Filter
@@ -299,7 +299,7 @@ const AllProducts = () => {
             {/* Mobile Sidebar Modal */}
             {isFilterOpen && (
               <div data-aos="fade-left" className="fadeToRight fixed inset-0 z-50 md:!hidden">
-                <div className="fixed top-0 right-0 w-80 h-full bg-white p-6 shadow-lg transform transition-transform duration-300 ease-in-out">
+                <div className="fixed top-20 right-0 w-80 h-full bg-white p-6 shadow-lg transform transition-transform duration-300 ease-in-out">
                   <div className="flex justify-between items-center mb-6">
                     <h3 className="text-xl font-semibold text-gray-800">Filters</h3>
                     <button
@@ -387,22 +387,22 @@ const AllProducts = () => {
                   return (
                     <div
                       key={product._id}
-                      className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+                      className="bg-gray-100 p-3 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer"
                       onClick={() => handleProductClick(product._id)}
-                      data-aos="zoom-out"
+                      data-aos="zoom-in"
                     >
                       <img
                         src={product.image}
                         alt={product.name}
-                        className="w-full h-80 object-cover"
+                        className="w-full h-80 rounded-lg"
                       />
-                      <div className="p-4">
+                      <div className="mt-5">
                         <h3 className="text-lg font-medium text-gray-900 truncate">{product.name}</h3>
-                        <div className="flex">
-                          <p className="text-gray-100 text-sm mt-1 bg-blue-900 px-2">Brand</p>
-                          <p className="text-gray-600 text-sm mt-1 bg-blue-100 px-2">{product.brand}</p>
+                        <div className="flex ">
+                          <p className="text-gray-100 text-sm mt-1 rounded-l-md bg-blue-900 px-2">Brand</p>
+                          <p className="text-gray-600 text-sm mt-1 rounded-r-md bg-blue-200 font-semibold px-2">{product.brand}</p>
                         </div>
-                        <p className="text-gray-600 text-sm mt-1">{product.type}</p>
+                        <p className="text-gray-600 font-semibold text-sm mt-1">{product.type}</p>
                         <p className="text-sm mt-1">
                           {product.quantity > 0 ? (
                             <span className="text-green-600">In Stock</span>
@@ -411,12 +411,12 @@ const AllProducts = () => {
                           )}
                         </p>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <p className="ml-4 mb-1 text-xl text-blue-700">${product.price}</p>
+                      <div className="flex justify-between items-center mt-2">
+                        <p className=" mb-1 text-xl text-blue-700">${product.price}</p>
                         <div className="flex gap-1">
                           <button
                             onClick={() => handleProductClick(product._id)}
-                            className="bg-black text-white p-4 py-2 rounded-t-xl"
+                            className="bg-black text-white hover:bg-gray-700 hover:text-blue-100 p-4 py-2 rounded-md"
                           >
                             Details
                           </button>
@@ -425,7 +425,7 @@ const AllProducts = () => {
                               e.stopPropagation();
                               handleAddToCart(product._id);
                             }}
-                            className={`p-4 py-2 text-white rounded-tl-xl ${
+                            className={`p-4 py-2 text-white rounded-md  hover:text-blue-100 ${
                               outOfStock
                                 ? "bg-gray-400"
                                 : inCart

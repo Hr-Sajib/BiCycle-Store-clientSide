@@ -9,13 +9,13 @@ const Branding = () => {
               Your premier destination for high-quality bicycles, accessories, and cycling gear.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <span className="bg-white px-4 py-2 rounded-full border text-sm text-blue-600 shadow">
+              <span className="bg-white px-4 py-2 rounded-md border font-semibold text-sm text-blue-800 shadow">
               👨‍💻 Expert Support
               </span>
-              <span className="bg-white px-4 py-2 rounded-full border text-sm text-blue-600 shadow">
+              <span className="bg-white px-4 py-2 rounded-md border font-semibold text-sm text-blue-800 shadow">
               🏆 Premium Quality
               </span>
-              <span className="bg-white px-4 py-2 rounded-full border text-sm text-blue-600 shadow">
+              <span className="bg-white px-4 py-2 rounded-md border  font-semibold text-sm text-blue-800 shadow">
               🚚 Fast Shipping
               </span>
             </div>

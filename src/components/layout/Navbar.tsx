@@ -37,7 +37,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <div className="sticky bg-white border-b-1 border-black top-0 w-full mx-auto mt-5 flex justify-between items-center p-4 z-50">
+    <div className="sticky bg-gray-100  top-0 w-full mx-auto flex justify-between items-center p-4 z-90">
       {/* Brand */}
       <Link to="/" className="font-bold text-2xl flex gap-1 items-center">
         <p className="bg-white rounded-full w-8 h-8 flex justify-center items-center">🛞</p>
@@ -107,7 +107,7 @@ const Navbar = () => {
           <div ref={profileRef} className="relative">
             <button
               onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-              className="block md:inline-block flex items-center bg-blue-50 text-teal-600 p-2 rounded hover:bg-teal-100 w-full md:w-auto text-left md:text-center mt-2 md:mt-0"
+              className="border border-cyan-600 md:inline-block flex items-center bg-blue-50 text-teal-600 p-2 rounded hover:bg-teal-100 w-full md:w-auto text-left md:text-center mt-2 md:mt-0"
               aria-label="Open profile menu"
             >
               <FiUser size={20} className="mr-2" />
@@ -174,7 +174,7 @@ const Navbar = () => {
           <div ref={profileRef} className="relative">
             <button
               onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-              className="mr-5 flex items-center bg-blue-50 text-teal-600 p-3 py-2 rounded-sm hover:bg-teal-100"
+              className="border border-cyan-600 mr-5 flex items-center bg-blue-50 text-teal-600 p-3 py-2 rounded-sm hover:bg-teal-100"
               aria-label="Open profile menu"
             >
               <FiUser size={20} className="mr-2" />

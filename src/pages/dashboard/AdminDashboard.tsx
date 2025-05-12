@@ -34,7 +34,7 @@ const AdminDashboard = () => {
   });
   const { data: orderData, isLoading: isOrdersLoading, error: orderError } = useGetAllOrdersQuery();
 
-  console.log("error in order loading: ", orderError);
+  // console.log("error in order loading: ", orderError);
 
   const [toggleUserStatus, { isLoading: isToggling }] = useToggleUserStatusMutation();
   const [selectedProduct, setSelectedProduct] = useState<TProduct | null>(null);
@@ -180,7 +180,7 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      <div className="w-64 bg-gray-800 text-white sticky top-58 rounded-r-2xl h-[60vh] z-10 lg:!block hidden">
+      <div className="w-64 bg-gray-800 text-white sticky top-54 mb-2 rounded-r-2xl h-[60vh] z-10 lg:!block hidden">
         <div className="p-6">
           <h2 className="text-2xl font-bold mb-6">Admin Options</h2>
           <nav>
