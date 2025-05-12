@@ -29,14 +29,14 @@ const Home = () => {
     return (
         <div className="">
             <Hero/>
-            <div className="bg-gradient-to-r from-blue-200 to-orange-200 font-josefin-sans mt-2 mb-10 ">
+            <div className="bg-gradient-to-r from-blue-200 to-gray-200 font-josefin-sans mt-2 mb-10 ">
             <Slider {...sliderSettings} className=" border-black  w-[90vw] pl-[10vw]">
                                     
-                <div><p className="text-[3.5vw] mb-0 text-orange-700">MOUNTAIN</p></div>
-                <div><p className="text-[3.5vw] mb-0 text-orange-700">ROAD</p></div>
-                <div><p className="text-[3.5vw] mb-0 text-orange-700">HYBRIDS</p></div>
-                <div><p className="text-[3.5vw] mb-0 text-orange-700">BMX</p></div>
-                <div><p className="text-[3.5vw] mb-0 text-orange-700">ELECTRIC</p></div>
+                <div><p className="text-[3.2vw] mb-0 text-blue-800">MOUNTAIN</p></div>
+                <div><p className="text-[3.2vw] mb-0 text-blue-800">ROAD</p></div>
+                <div><p className="text-[3.2vw] mb-0 text-blue-800">HYBRIDS</p></div>
+                <div><p className="text-[3.2vw] mb-0 text-blue-800">BMX</p></div>
+                <div><p className="text-[3.2vw] mb-0 text-blue-800">ELECTRIC</p></div>
                                                     
             </Slider>
         </div>
