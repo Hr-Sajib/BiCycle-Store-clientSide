@@ -6,7 +6,7 @@
 
 Welcome to the **Bicycle Store**! This is a feature-rich, user-friendly frontend for an e-commerce web application that allows users to browse, filter, and purchase bicycles. Built with scalability, performance, and user experience in mind.
 
-✅ Live Site: <https://bicycle-store-client-one.vercel.app>\
+✅ Live Site: <https://bicycle-store-client-one.vercel.app>
 
 🧑‍💻 Admin Credentials:\
 `Email:` admin@bicycle.com\
